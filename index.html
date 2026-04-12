@@ -8,18 +8,23 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', Arial, sans-serif; }
         body { background-color: #0f0f0f; color: white; overflow-x: hidden; scroll-behavior: smooth; }
 
-        /* INTRO LOADING SCREEN */
+        /* 10 DETIK INTRO LOADING SCREEN */
         #intro-loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #0f0f0f; display: flex; flex-direction: column;
             align-items: center; justify-content: center; z-index: 10000;
-            transition: opacity 0.8s ease, visibility 0.8s;
+            transition: opacity 1s ease, visibility 1s;
         }
-        .intro-logo { font-size: 32px; font-weight: bold; margin-bottom: 20px; animation: pulse 1.5s infinite; }
-        .intro-logo span { background: #ff0000; color: white; padding: 4px 10px; border-radius: 6px; margin-left: 5px; }
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+        .intro-logo { font-size: 35px; font-weight: bold; margin-bottom: 20px; }
+        .intro-logo span { background: #ff0000; color: white; padding: 4px 12px; border-radius: 6px; margin-left: 5px; }
+        
+        /* Progress Bar Loading */
+        .loader-container { width: 200px; height: 4px; background: #333; border-radius: 10px; overflow: hidden; margin-top: 20px; }
+        .loader-fill { width: 0%; height: 100%; background: #ff0000; animation: fillProgress 10s linear forwards; }
+        
+        @keyframes fillProgress { from { width: 0%; } to { width: 100%; } }
 
-        /* LOADING BAR ATAS */
+        /* LOADING BAR ATAS (SAAT CARI VIDEO) */
         #loader-bar {
             position: fixed; top: 0; left: 0; width: 0%; height: 3px;
             background: #ff0000; z-index: 9999; transition: width 0.3s ease;
@@ -33,7 +38,7 @@
             position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
             border-bottom: 1px solid #222;
         }
-        .logo { font-size: 20px; font-weight: bold; color: white; text-decoration: none; display: flex; align-items: center; }
+        .logo { font-size: 20px; font-weight: bold; color: white; text-decoration: none; display: flex; align-items: center; cursor: pointer; }
         .logo span { background: #ff0000; color: white; padding: 2px 8px; border-radius: 4px; margin-left: 5px; }
 
         .search-container { display: flex; width: 45%; max-width: 600px; }
@@ -49,17 +54,17 @@
         .nav-right { display: flex; align-items: center; gap: 15px; }
         .nav-right button { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
 
-        /* CONTAINER */
+        /* MAIN CONTENT */
         .container { display: flex; flex-direction: column; align-items: center; padding: 80px 10px 20px 10px; }
 
-        /* PLAYER */
+        /* PLAYER AREA */
         #video-display { width: 100%; max-width: 900px; display: none; margin-bottom: 30px; animation: slideIn 0.5s ease; }
-        .player-wrapper { position: relative; padding-top: 56.25%; background: black; border-radius: 12px; overflow: hidden; }
+        .player-wrapper { position: relative; padding-top: 56.25%; background: black; border-radius: 12px; overflow: hidden; border: 1px solid #333; }
         .player-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-        /* GRID */
+        /* VIDEO GRID */
         .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; width: 100%; max-width: 1400px; margin-top: 20px; }
-        .video-card { cursor: pointer; transition: 0.3s; animation: fadeIn 0.8s ease; }
+        .video-card { cursor: pointer; transition: 0.3s; }
         .video-card:hover { transform: translateY(-5px); }
         .video-card img { width: 100%; border-radius: 12px; aspect-ratio: 16/9; object-fit: cover; }
         .video-info { display: flex; gap: 12px; margin-top: 10px; }
@@ -75,20 +80,20 @@
         #menu-sidebar.active { right: 0; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; z-index: 1500; }
         .overlay.active { display: block; }
-        .menu-item { display: block; padding: 15px; color: white; text-decoration: none; border-radius: 8px; cursor: pointer; }
+        .menu-item { display: block; padding: 15px; color: white; text-decoration: none; border-radius: 8px; cursor: pointer; margin-bottom: 5px; }
         .menu-item:hover { background: #333; }
         .menu-item i { margin-right: 15px; width: 20px; text-align: center; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         /* LANDSCAPE FIX */
         @media (orientation: landscape) and (max-width: 900px) {
             nav { display: none; }
             .container { padding: 0; }
             #video-display { max-width: 100vw; margin: 0; }
-            .player-wrapper { border-radius: 0; }
+            .player-wrapper { border-radius: 0; border: none; }
         }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -96,16 +101,19 @@
 
     <div id="intro-loader">
         <div class="intro-logo">Nachyn<span>Tube</span></div>
-        <p style="color: #555; font-size: 12px;">Premium Access Loading...</p>
+        <div class="loader-container">
+            <div class="loader-fill"></div>
+        </div>
+        <p style="color: #666; font-size: 13px; margin-top: 15px; letter-spacing: 1px;">MEMPERSIAPKAN AKSES PREMIUM...</p>
     </div>
 
     <div id="loader-bar"></div>
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
     <nav>
-        <a href="javascript:void(0)" class="logo" onclick="resetHome()">Nachyn<span>Tube</span></a>
+        <div class="logo" onclick="resetHome()">Nachyn<span>Tube</span></div>
         <div class="search-container">
-            <input type="text" id="search-input" placeholder="Cari video...">
+            <input type="text" id="search-input" placeholder="Cari apa saja...">
             <button onclick="searchVideo()"><i class="fas fa-search"></i></button>
         </div>
         <div class="nav-right">
@@ -115,36 +123,36 @@
 
     <div id="menu-sidebar">
         <h2 style="margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
-            Menu <i class="fas fa-times" onclick="toggleMenu()" style="cursor: pointer; font-size: 18px;"></i>
+            Menu <i class="fas fa-times" onclick="toggleMenu()" style="cursor: pointer; font-size: 18px; color: #aaa;"></i>
         </h2>
         <div class="menu-item" onclick="resetHome()"><i class="fas fa-home"></i> Beranda</div>
         <div class="menu-item" onclick="searchByTag('Trending')"><i class="fas fa-bolt"></i> Trending</div>
         <div class="menu-item" onclick="searchByTag('Music')"><i class="fas fa-music"></i> Musik</div>
         <div class="menu-item" onclick="searchByTag('Gaming')"><i class="fas fa-gamepad"></i> Game</div>
         <div style="border-top: 1px solid #333; margin: 15px 0;"></div>
-        <div class="menu-item" style="color: #ff0000;"><i class="fas fa-crown"></i> Status Premium: Aktif</div>
+        <div class="menu-item" style="color: #ff0000;"><i class="fas fa-crown"></i> Nachyn Premium: Aktif</div>
     </div>
 
     <div class="container">
         <div id="video-display">
             <div class="player-wrapper" id="player"></div>
-            <h2 id="playing-title" style="margin-top: 15px; font-size: 18px;"></h2>
+            <h2 id="playing-title" style="margin-top: 15px; font-size: 18px; font-weight: 500;"></h2>
             <p id="playing-channel" style="color: #aaa; font-size: 14px; margin-bottom: 10px;"></p>
         </div>
         <div class="results-grid" id="results"></div>
     </div>
 
     <script>
-        // GANTI DENGAN API KEY GOOGLE CLOUD LO
+        // MASUKKAN API KEY GOOGLE CLOUD ANDA DI SINI
         const API_KEY = 'AIzaSyDcY-7czDHgxYjCe6wvjZhusV-4DSBXGkM'; 
 
-        // Hilangkan Intro Loader setelah 2 detik
-        window.addEventListener('load', () => {
+        // LOGIKA LOADING 10 DETIK
+        window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const intro = document.getElementById('intro-loader');
                 intro.style.opacity = '0';
-                setTimeout(() => intro.style.visibility = 'hidden', 800);
-            }, 2000);
+                setTimeout(() => intro.style.visibility = 'hidden', 1000);
+            }, 10000); // 10000ms = 10 Detik
         });
 
         function toggleMenu() {
@@ -200,7 +208,7 @@
                     card.onclick = () => playVideo(item.id.videoId, item.snippet.title, item.snippet.channelTitle);
                     resultsDiv.appendChild(card);
                 });
-            } catch (e) { alert("Cek API Key lo!"); }
+            } catch (e) { alert("Waduh, cek API Key lo!"); }
             hideLoading();
         }
 
@@ -209,8 +217,10 @@
             document.getElementById('video-display').style.display = 'block';
             document.getElementById('playing-title').innerText = title;
             document.getElementById('playing-channel').innerText = channel;
+            
+            // Player dengan integrasi API YouTube yang lebih stabil
             document.getElementById('player').innerHTML = `
-                <iframe src="https://www.youtube.com/embed/${id}?autoplay=1" 
+                <iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0&showinfo=0&enablejsapi=1" 
                 frameborder="0" allow="autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
         }
 
