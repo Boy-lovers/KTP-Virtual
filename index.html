@@ -6,124 +6,102 @@
     <title>NachynTube Premium</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-        body { background-color: #0f0f0f; color: white; }
+        body { background-color: #000; color: #fff; }
 
-        /* INTRO LOADING 10 DETIK */
-        #intro-loader {
-            position: fixed; inset: 0; background: #0f0f0f;
+        /* LOADING 10 DETIK */
+        #intro {
+            position: fixed; inset: 0; background: #000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 10000; transition: 0.8s;
+            z-index: 9999;
         }
-        .intro-logo { font-size: 32px; font-weight: bold; }
-        .intro-logo span { background: #ff0000; padding: 2px 8px; border-radius: 5px; margin-left: 5px; }
-        .bar-bg { width: 200px; height: 4px; background: #333; margin: 20px 0; border-radius: 10px; overflow: hidden; }
-        .bar-fill { width: 0%; height: 100%; background: #ff0000; animation: load 10s linear forwards; }
+        .bar { width: 200px; height: 4px; background: #333; margin-top: 20px; border-radius: 5px; overflow: hidden; }
+        .fill { width: 0%; height: 100%; background: red; animation: load 10s linear forwards; }
         @keyframes load { to { width: 100%; } }
 
         /* NAVBAR */
-        nav { position: fixed; top: 0; width: 100%; height: 60px; background: #0f0f0f; display: flex; align-items: center; padding: 0 15px; z-index: 1000; border-bottom: 1px solid #222; }
-        .search-area { flex: 1; display: flex; margin: 0 15px; }
-        .search-area input { flex: 1; padding: 8px 12px; background: #121212; border: 1px solid #333; color: white; border-radius: 20px 0 0 20px; outline: none; }
-        .search-area button { padding: 0 15px; background: #222; border: 1px solid #333; border-left: none; color: white; border-radius: 0 20px 20px 0; }
+        nav { position: fixed; top: 0; width: 100%; height: 60px; background: #000; display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid #333; z-index: 1000; }
+        .search-box { flex: 1; display: flex; margin: 0 10px; }
+        input { flex: 1; padding: 8px; border-radius: 5px 0 0 5px; border: 1px solid #333; background: #111; color: #fff; outline: none; }
+        button { padding: 8px 15px; background: #333; color: #fff; border: none; border-radius: 0 5px 5px 0; cursor: pointer; }
 
-        /* CONTENT */
-        .container { padding: 75px 10px 20px; max-width: 1200px; margin: 0 auto; }
+        /* CONTAINER */
+        .container { padding: 70px 10px 20px; }
         
-        /* PLAYER (Sengaja gue kasih border merah biar keliatan) */
-        #player-box { display: none; margin-bottom: 20px; background: #000; border-radius: 10px; overflow: hidden; border: 1px solid #333; }
-        .video-container { position: relative; padding-top: 56.25%; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        /* PLAYER - GUE KASIH BORDER BIAR KELIATAN */
+        #player-area { display: none; width: 100%; max-width: 800px; margin: 0 auto 20px; border: 2px solid #ff0000; border-radius: 10px; overflow: hidden; }
+        .ratio { position: relative; padding-top: 56.25%; background: #111; }
+        .ratio iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-        /* GRID VIDEO */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
-        .card { cursor: pointer; background: #181818; border-radius: 10px; overflow: hidden; padding-bottom: 10px; }
+        /* GRID */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+        .card { cursor: pointer; background: #111; border-radius: 8px; overflow: hidden; }
         .card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
-        .card h3 { font-size: 14px; padding: 10px; color: #efefef; line-height: 1.3; }
-
-        /* SIDEBAR */
-        #side { position: fixed; top: 0; right: -250px; width: 250px; height: 100%; background: #121212; z-index: 2000; transition: 0.3s; padding: 20px; }
-        #side.active { right: 0; }
-        .m-item { padding: 12px; cursor: pointer; border-bottom: 1px solid #222; }
+        .card p { padding: 8px; font-size: 12px; height: 45px; overflow: hidden; }
     </style>
 </head>
 <body>
 
-    <div id="intro-loader">
-        <div class="intro-logo">Nachyn<span>Tube</span></div>
-        <div class="bar-bg"><div class="bar-fill"></div></div>
-        <p style="color:#555; font-size:12px">MEMPROSES AKSES PREMIUM...</p>
+    <div id="intro">
+        <h1 style="color:red">Nachyn<span style="color:white">Tube</span></h1>
+        <div class="bar"><div class="fill"></div></div>
+        <p style="margin-top:10px; font-size:12px">BYPASSING YOUTUBE ADS...</p>
     </div>
 
     <nav>
-        <div style="font-weight:bold" onclick="location.reload()">Nachyn<span style="color:red">Tube</span></div>
-        <div class="search-area">
-            <input type="text" id="keyword" placeholder="Cari...">
-            <button onclick="cari()"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <b onclick="location.reload()">Nachyn<span style="color:red">Tube</span></b>
+        <div class="search-box">
+            <input type="text" id="in" placeholder="Cari Minecraft, Music, dll...">
+            <button onclick="search()"><i class="fas fa-search">"></i>Cari</button>
         </div>
-        <div onclick="menu()"><i class="fa-solid fa-bars"></i></div>
     </nav>
 
-    <div id="side">
-        <h3 onclick="menu()" style="color:red; margin-bottom:20px">TUTUP</h3>
-        <div class="m-item" onclick="location.reload()">Beranda</div>
-        <div class="m-item" onclick="tag('Trending')">Trending</div>
-        <div class="m-item" onclick="tag('Music')">Musik</div>
-        <p style="margin-top:20px; color:green">PREMIUM AKTIF ✅</p>
-    </div>
-
     <div class="container">
-        <div id="player-box">
-            <div class="video-container" id="vid-frame"></div>
-            <h2 id="vid-title" style="padding:15px; font-size:16px"></h2>
+        <div id="player-area">
+            <div class="ratio" id="frame"></div>
+            <h3 id="t" style="padding:10px; font-size:14px"></h3>
         </div>
 
-        <div class="grid" id="hasil"></div>
+        <div class="grid" id="out"></div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
     <script>
-        const KEY = 'AIzaSyDcY-7czDHgxYjCe6wvjZhusV-4DSBXGkM'; // WAJIB ISI!
+        const KEY = 'AIzaSyDcY-7czDHgxYjCe6wvjZhusV-4DSBXGkM'; // <--- WAJIB ISI INI!!
 
-        // Loading 10 Detik
-        window.onload = () => {
-            setTimeout(() => {
-                document.getElementById('intro-loader').style.display = 'none';
-            }, 10000);
-        };
+        // Intro 10 Detik
+        setTimeout(() => { document.getElementById('intro').style.display = 'none'; }, 10000);
 
-        function menu() { document.getElementById('side').classList.toggle('active'); }
-        function tag(t) { document.getElementById('keyword').value = t; menu(); cari(); }
-
-        async function cari() {
-            const q = document.getElementById('keyword').value;
+        async function search() {
+            const q = document.getElementById('in').value;
             if(!q) return;
-            const res = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=16&q=${encodeURIComponent(q)}&type=video&key=${KEY}`);
-            const data = await res.json();
-            const g = document.getElementById('hasil');
-            g.innerHTML = '';
-            data.items.forEach(i => {
-                const c = document.createElement('div');
-                c.className = 'card';
-                c.innerHTML = `<img src="${i.snippet.thumbnails.high.url}"><h3>${i.snippet.title}</h3>`;
-                c.onclick = () => putar(i.id.videoId, i.snippet.title);
-                g.appendChild(c);
-            });
+            try {
+                const r = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=12&q=${encodeURIComponent(q)}&type=video&key=${KEY}`);
+                const d = await r.json();
+                const grid = document.getElementById('out');
+                grid.innerHTML = '';
+                d.items.forEach(i => {
+                    grid.innerHTML += `
+                        <div class="card" onclick="play('${i.id.videoId}', '${i.snippet.title.replace(/'/g, "")}')">
+                            <img src="${i.snippet.thumbnails.medium.url}">
+                            <p>${i.snippet.title}</p>
+                        </div>`;
+                });
+            } catch(e) { alert("API ERROR!"); }
         }
 
-        function putar(id, judul) {
-            // PAKSA LAYAR SCROLL KE ATAS BIAR KELIATAN VIDEONYA
+        function play(id, title) {
+            // SCROLL KE ATAS SUPAYA PLAYER KELIATAN
             window.scrollTo({top: 0, behavior: 'smooth'});
             
-            document.getElementById('player-box').style.display = 'block';
-            document.getElementById('vid-title').innerText = judul;
+            document.getElementById('player-area').style.display = 'block';
+            document.getElementById('t').innerText = title;
             
-            // Player dengan mode "No-Cookie" biar lebih jarang kena blokir
-            document.getElementById('vid-frame').innerHTML = `
-                <iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" 
+            // JALUR KHUSUS ANTI BLOKIR (youtube-nocookie)
+            document.getElementById('frame').innerHTML = `
+                <iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&controls=1" 
                 frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
         }
 
-        document.getElementById('keyword').onkeypress = (e) => { if(e.key === 'Enter') cari(); };
+        document.getElementById('in').onkeypress = (e) => { if(e.key === 'Enter') search(); };
     </script>
 </body>
 </html>
