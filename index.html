@@ -219,7 +219,7 @@
         .card-body .channel { font-size:11.5px; color:var(--text-muted); margin-top:5px; display:flex; align-items:center; gap:6px; }
         .channel-dot { width:5px; height:5px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2)); flex-shrink:0; transition:background 0.5s; }
 
-        /* ── FIX: RE-DESIGN MINI PLAYER DI KANAN BAWAH ── */
+        /* ── MINI PLAYER DI KANAN BAWAH ── */
         #mini-player {
             position:fixed; bottom:24px; right:24px; z-index:300;
             width:350px; flex-direction:column; gap:12px;
@@ -363,8 +363,10 @@
     </div>
 </div>
 
+<audio id="bg-audio-driver" loop style="display:none;"></audio>
+
 <script>
-// MASUKKAN API KEY BARU KAMU YANG AKTIF DI BAWAH INI (BARIS 219)
+// MASUKKAN API KEY BARU KAMU YANG AKTIF DI BAWAH INI (BARIS 216)
 const API_KEY = 'AIzaSyDkxB1zAcA_fRz7Toi_9A68FJhH5eOTBZY'; 
 const loader = document.getElementById('loader-bar');
 let currentPage = 'tube';
@@ -380,6 +382,7 @@ let durationSec = 0;
 window.addEventListener('DOMContentLoaded', () => {
     loadTrendingVideos();
     loadTrendingMusic();
+    setupMediaSession();
 });
 
 // ── LOADER ──
@@ -430,7 +433,7 @@ async function loadTrendingVideos() {
         const data = await res.json();
         
         if (data.error) {
-            grid.innerHTML = `<p style="color:#ff3b3b;grid-column:1/-1;text-align:center;padding:40px;line-height:1.6;">API Error: ${data.error.message}<br><span style="color:var(--text-muted)">Silakan masukkan API Key baru kamu yang aktif di dalam script baris 219.</span></p>`;
+            grid.innerHTML = `<p style="color:#ff3b3b;grid-column:1/-1;text-align:center;padding:40px;line-height:1.6;">API Error: ${data.error.message}<br><span style="color:var(--text-muted)">Silakan masukkan API Key baru kamu yang aktif di dalam script baris 216.</span></p>`;
             return;
         }
 
@@ -565,7 +568,6 @@ function renderVideoCard(grid, item, i, mode) {
     grid.appendChild(c);
 }
 
-// FIX: DI SINI FULL SCREEN DIBERI IZIN (allowfullscreen)
 function playTubeVideo(id, title) {
     showLoading();
     const display = document.getElementById('video-display');
@@ -577,7 +579,7 @@ function playTubeVideo(id, title) {
     hideLoading();
 }
 
-// ── MUSIC PLAYER ──
+// ── MUSIC PLAYER (WITH BACKGROUND AUDIO DRIVER) ──
 function playMusicTrack(idx) {
     currentTrackIdx = idx;
     const track = musicQueue[idx];
@@ -598,7 +600,12 @@ function playMusicTrack(idx) {
     document.getElementById('time-cur').textContent = '0:00';
     document.getElementById('time-dur').textContent = fmtTime(durationSec);
 
-    // FIX: TAMBAHKAN allowfullscreen AGAR FITUR FULL SCREEN MUSIK BISA AKTIF JUGA
+    // FIX: Suntik audio pemicu agar Android mengizinkan pemutaran saat layar mati / keluar aplikasi
+    const audioDriver = document.getElementById('bg-audio-driver');
+    audioDriver.src = "https://actions.google.com/sounds/v1/science_fiction/ambient_power_plant_drone.ogg"; // Audio sunyi/ambient ringan bawaan Google
+    audioDriver.volume = 0.01; 
+    audioDriver.play().catch(() => {});
+
     let container = document.getElementById('music-iframe-container');
     if (!container) {
         container = document.createElement('div');
@@ -607,6 +614,17 @@ function playMusicTrack(idx) {
         document.body.appendChild(container);
     }
     container.innerHTML = `<iframe id="music-iframe" src="https://www.youtube.com/embed/${track.id}?autoplay=1&enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+
+    // Integrasi ke Sistem Notifikasi Android/Chrome
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: track.title,
+            artist: track.channel,
+            album: 'NachynMusic Premium',
+            artwork: [{ src: track.thumb, sizes: '512x512', type: 'image/jpeg' }]
+        });
+        navigator.mediaSession.playbackState = "playing";
+    }
 
     // Simulate progress Bar
     clearInterval(progressInterval);
@@ -628,11 +646,18 @@ function playMusicTrack(idx) {
 function togglePlay() {
     isPlaying = !isPlaying;
     document.getElementById('pp-btn').textContent = isPlaying ? '⏸' : '▶';
+    
+    const audioDriver = document.getElementById('bg-audio-driver');
     const iframe = document.getElementById('music-iframe');
-    if (iframe) {
-        const src = iframe.src;
-        if (!isPlaying) iframe.src = '';
-        else iframe.src = src || `https://www.youtube.com/embed/${musicQueue[currentTrackIdx]?.id}?autoplay=1&enablejsapi=1`;
+
+    if (!isPlaying) {
+        if (iframe) iframe.src = '';
+        audioDriver.pause();
+        if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused";
+    } else {
+        audioDriver.play().catch(() => {});
+        if (iframe) iframe.src = `https://www.youtube.com/embed/${musicQueue[currentTrackIdx]?.id}?autoplay=1&enablejsapi=1`;
+        if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "playing";
     }
 }
 
@@ -647,6 +672,16 @@ function prevTrack() {
     playMusicTrack((currentTrackIdx - 1 + musicQueue.length) % musicQueue.length);
 }
 
+// HUBUNGKAN TOMBOL DI BILAH NOTIFIKASI HP KE FUNGSI JAVASCRIPT
+function setupMediaSession() {
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.setActionHandler('play', () => { togglePlay(); });
+        navigator.mediaSession.setActionHandler('pause', () => { togglePlay(); });
+        navigator.mediaSession.setActionHandler('previoustrack', () => { prevTrack(); });
+        navigator.mediaSession.setActionHandler('nexttrack', () => { nextTrack(); });
+    }
+}
+
 function seekTrack(e) {
     const bar = document.getElementById('prog-bar');
     const ratio = e.offsetX / bar.offsetWidth;
@@ -659,8 +694,10 @@ function closeMiniPlayer() {
     clearInterval(progressInterval);
     isPlaying = false;
     document.getElementById('mini-player').style.display = 'none';
+    document.getElementById('bg-audio-driver').pause();
     const c = document.getElementById('music-iframe-container');
     if (c) c.innerHTML = '';
+    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "none";
     document.querySelectorAll('#music-results .video-card').forEach(c => { c.style.borderColor=''; c.style.boxShadow=''; });
 }
 
@@ -669,7 +706,6 @@ function fmtTime(s) {
     return `${m}:${String(Math.floor(s%60)).padStart(2,'0')}`;
 }
 
-// ── ENTER KEY ──
 document.getElementById('search-input').addEventListener('keypress', e => {
     if (e.key === 'Enter') doSearch();
 });
