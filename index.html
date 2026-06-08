@@ -109,10 +109,8 @@
         @keyframes pageIn { from{opacity:0;transform:translateY(15px)} to{opacity:1;transform:translateY(0)} }
         .container { padding:24px 24px 150px; max-width: 1400px; margin: 0 auto; }
 
-        /* ── SMART FLOATING VIDEO PLAYER (TUBE) ── */
+        /* ── SMART FLOATING VIDEO PLAYER ── */
         #video-display { width:100%; max-width:850px; display:none; margin: 0 auto 35px; transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1); }
-        
-        /* Class pemicu otomatis ketika di-scroll ke bawah */
         #video-display.floating {
             position: fixed; bottom: 90px; right: 24px; width: 320px; z-index: 1000;
             margin: 0; animation: floatIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -152,7 +150,7 @@
         .card-body h3 { font-size:14px; font-weight:600; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
         .card-body .channel { font-size:12px; color:var(--text-muted); margin-top:5px; }
 
-        /* ── REMODEL MINI-PLAYER (DIBUAT LEBIH KECIL & RAMPING) ── */
+        /* ── REMODEL MINI-PLAYER CONTROLLER ── */
         #spotify-player {
             position:fixed; bottom:0; left:0; right:0; z-index:300;
             background:#121212; border-top:1px solid #232323;
@@ -163,7 +161,7 @@
         .sp-left { display: flex; align-items: center; gap: 12px; width: 30%; min-width: 180px; transition: all 0.5s; }
         .sp-thumb { width: 48px; height: 48px; border-radius: 4px; object-fit: cover; transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1); }
         .sp-info { overflow: hidden; }
-        .sp-title { font-size: 13.5px; font-weight: 600; color: #fff; }
+        .sp-title { font-size: 13.5px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .sp-channel { font-size: 11.5px; color: #b3b3b3; margin-top: 2px; }
 
         .sp-center { display: flex; flex-direction: column; align-items: center; width: 40%; max-width: 550px; transition: all 0.5s; }
@@ -190,9 +188,9 @@
         .sp-btn-extra { background: none; border: none; color: #b3b3b3; font-size: 18px; cursor: pointer; transition: 0.2s; }
         .sp-btn-extra:hover { color: #fff; }
 
-        /* ── SEKSI FULL SCREEN MODE (EXPANDED PLAYBACK SPOTIFY) ── */
+        /* ── SEKSI FULL SCREEN MODE (EXPANDED SPOTIFY) ── */
         #spotify-player.expanded {
-            height: 100vh; top: 0; bottom: 0; background: linear-gradient(to bottom, #1e3c2f, #0f1c16, #090909);
+            height: 100vh; top: 0; bottom: 0; background: linear-gradient(to bottom, #193026, #0e1713, #070707);
             flex-direction: column; justify-content: center; align-items: center; padding: 40px 24px; gap: 30px;
         }
         #spotify-player.expanded .sp-left {
@@ -214,8 +212,7 @@
             position: absolute; bottom: 40px; width: 85%; max-width: 360px; justify-content: space-between;
         }
 
-        /* Tombol Khusus Minimize di pojok atas ketika Full Screen */
-        .btn-minimize { display: none; position: absolute; top: 24px; left: 24px; background: none; border: none; color: white; font-size: 28px; cursor: pointer; }
+        .btn-minimize { display: none; position: absolute; top: 24px; left: 24px; background: none; border: none; color: white; font-size: 28px; cursor: pointer; z-index: 10; }
         #spotify-player.expanded .btn-minimize { display: block; }
 
         /* ── LAYER LIRIK SAAT FULL SCREEN ── */
@@ -227,7 +224,6 @@
         }
         #lyrics-panel.open { right: 0; }
         
-        /* Modifikasi lirik jika sedang mode Full Screen Spotify */
         #spotify-player.expanded #lyrics-panel {
             position: relative; top: unset; right: unset; bottom: unset; width: 85%; max-width: 360px;
             height: 120px; border-left: none; background: rgba(255,255,255,0.06); border-radius: 12px;
@@ -244,16 +240,14 @@
             .search-container { width: 100%; min-width: 100%; }
             #spotify-player:not(.expanded) .sp-left { width: 65%; }
             #spotify-player:not(.expanded) .sp-right { width: 25%; }
-            #spotify-player:not(.expanded) .sp-center { display: none; } /* Sembunyikan progress di mini player HP biar ga sesak */
+            #spotify-player:not(.expanded) .sp-center { display: none; } 
             #lyrics-panel:not(.expanded-panel) { width: 100%; right: -100%; top: 126px; bottom: 72px; }
         }
     </style>
 </head>
 <body>
 
-<div id="tab-loader">
-    <div class="spinner"></div>
-</div>
+<div id="tab-loader"><div class="spinner"></div></div>
 
 <div id="splash-screen">
     <div class="splash-logo">Nachyn <span>Premium</span></div>
@@ -295,7 +289,7 @@
 </div>
 
 <div id="spotify-player">
-    <button class="btn-minimize" onclick="minimizeSpotifyPlayer()" title="Kecilkan"></button>
+    <button class="btn-minimize" onclick="minimizeSpotifyPlayer()" title="Kecilkan"><b></b></button>
     
     <div class="sp-left">
         <img class="sp-thumb" id="sp-thumb" src="" alt="Cover">
@@ -329,14 +323,14 @@
     <div id="lyrics-placeholder-expanded"></div>
 </div>
 
-<div id="lyrics-panel" id="standard-lyrics">
+<div id="lyrics-panel">
     <h2>Lirik Lagu</h2>
     <div id="lyrics-content">
         <div class="lyric-line active">♪ Menyinkronkan lirik otomatis...</div>
         <div class="lyric-line">Koneksi sistem background aman.</div>
         <div class="lyric-line">Silakan nikmati alunan musik</div>
         <div class="lyric-line">Premium dari Nachyn Music!</div>
-        <div class="lyric-line">🎧 Animasi Fullscreen Aktif.</div>
+        <div class="lyric-line">🎧 Multi-tasking Latar Belakang Aktif.</div>
     </div>
 </div>
 
@@ -353,7 +347,6 @@ let isPlaying = false;
 let progressInterval = null;
 let isVideoPlaying = false;
 
-// --- INITIAL BOOTING ---
 window.onload = () => {
     setTimeout(() => {
         const splash = document.getElementById('splash-screen');
@@ -361,8 +354,6 @@ window.onload = () => {
         setTimeout(() => splash.style.visibility = 'hidden', 500);
         loadBerandaDefault();
     }, 2000); 
-    
-    // Aktivasi event deteksi scroll untuk Smart Floating Video
     window.addEventListener('scroll', handleVideoScroll);
 };
 
@@ -371,7 +362,6 @@ function loadBerandaDefault() {
     fetchYoutubeAPI('Lagu Pop Hits Indonesia', 'music', 12);
 }
 
-// --- TRANSITION LOADING ANTAR TAB + RESET PREVIOUS AUDIO/VIDEO ---
 function switchPageWithLoading(page) {
     if (page === currentPage) return;
     
@@ -379,15 +369,12 @@ function switchPageWithLoading(page) {
     tabLoader.style.display = 'flex';
     tabLoader.style.opacity = '1';
     
-    // MENGHENTIKAN TOTAL PUTERAN SEBELUMNYA AGAR SUARA TIDAK BENTROK
     if (page === 'music') {
-        // Jika pindah ke Musik, matikan Video Tube
         document.getElementById('player').innerHTML = '';
         document.getElementById('video-display').style.display = 'none';
         document.getElementById('video-display').classList.remove('floating');
         isVideoPlaying = false;
     } else {
-        // Jika pindah ke Tube, matikan Musik Spotify
         if (ytPlayer && typeof ytPlayer.stopVideo === 'function') {
             ytPlayer.stopVideo();
         }
@@ -395,14 +382,14 @@ function switchPageWithLoading(page) {
         isPlaying = false;
         updatePlayBtnUI();
         document.getElementById('spotify-player').style.display = 'none';
-        minimizeSpotifyPlayer(); // Reset layout full screen jika terbuka
+        minimizeSpotifyPlayer(); 
     }
 
     setTimeout(() => {
         switchPage(page);
         tabLoader.style.opacity = '0';
         setTimeout(() => tabLoader.style.display = 'none', 300);
-    }, 550); // Delay loading transisi yang estetik
+    }, 550);
 }
 
 function switchPage(page) {
@@ -414,16 +401,12 @@ function switchPage(page) {
     document.body.classList.toggle('music-mode', page === 'music');
     document.getElementById('logo-badge').textContent = page === 'tube' ? 'Tube' : 'Music';
     document.getElementById('search-input').placeholder = page === 'tube' ? 'Cari video favoritmu...' : 'Cari lagu ala Spotify...';
-    
     document.getElementById('lyrics-panel').classList.remove('open');
 }
 
-// --- DETEKSI SMART SCROLL UNTUK VIDEO KECIL ---
 function handleVideoScroll() {
     if (currentPage !== 'tube' || !isVideoPlaying) return;
-    
     const videoDisplay = document.getElementById('video-display');
-    // Jika di-scroll melampaui 350px ke bawah, video akan menciut di kanan bawah
     if (window.scrollY > 350) {
         videoDisplay.className = 'floating';
     } else {
@@ -431,7 +414,6 @@ function handleVideoScroll() {
     }
 }
 
-// --- ENGINE REQUEST API ---
 function doSearch() {
     const queryStr = document.getElementById('search-input').value.trim();
     if (!queryStr) return;
@@ -484,7 +466,6 @@ async function fetchYoutubeAPI(query, type, maxResults) {
     } catch(err) { console.error(err); }
 }
 
-// --- TUBE VIDEO PLAYER PLAYLIST ---
 function playTubeVideo(id, title) {
     isVideoPlaying = true;
     const display = document.getElementById('video-display');
@@ -495,7 +476,6 @@ function playTubeVideo(id, title) {
     window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
-// --- IFRAME API MUSIC ENGINE ---
 function onYouTubeIframeAPIReady() {
     ytPlayer = new YT.Player('yt-player-dummy', {
         height: '0', width: '0', videoId: '',
@@ -512,7 +492,6 @@ function onPlayerStateChange(event) {
     }
 }
 
-// --- MUSIC HANDLER ---
 function playMusicTrack(idx) {
     if(!ytPlayer || !ytPlayer.loadVideoById) return;
     currentTrackIdx = idx;
@@ -528,10 +507,13 @@ function playMusicTrack(idx) {
     isPlaying = true;
     updatePlayBtnUI();
     
+    // Sinkronisasi dengan API MediaSession bawaan HP
     if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({ title: track.title, artist: track.channel, album: 'Nachyn Music' });
-        navigator.mediaSession.setActionHandler('play', togglePlay);
-        navigator.mediaSession.setActionHandler('pause', togglePlay);
+        navigator.mediaSession.setActionHandler('play', () => { ytPlayer.playVideo(); });
+        navigator.mediaSession.setActionHandler('pause', () => { ytPlayer.pauseVideo(); });
+        navigator.mediaSession.setActionHandler('previoustrack', prevTrack);
+        navigator.mediaSession.setActionHandler('nexttrack', nextTrack);
     }
 }
 
@@ -584,12 +566,9 @@ function fmtTime(seconds) {
     return `${Math.floor(s / 60)}:${String(s % 60).padStart(2,'0')}`;
 }
 
-// --- CONTROLLER FULL SCREEN ALA SPOTIFY ORIGINAL ---
 function maximizeSpotifyPlayer() {
     const player = document.getElementById('spotify-player');
     player.classList.add('expanded');
-    
-    // Pindahkan panel lirik ke dalam box player saat full screen agar rapi di bawah kontroler
     const lyricsPanel = document.getElementById('lyrics-panel');
     document.getElementById('lyrics-placeholder-expanded').appendChild(lyricsPanel);
     lyricsPanel.classList.add('open');
@@ -598,15 +577,12 @@ function maximizeSpotifyPlayer() {
 function minimizeSpotifyPlayer() {
     const player = document.getElementById('spotify-player');
     player.classList.remove('expanded');
-    
-    // Kembalikan panel lirik ke posisi default luar bar player semula
     const lyricsPanel = document.getElementById('lyrics-panel');
     document.body.appendChild(lyricsPanel);
     lyricsPanel.classList.remove('open');
 }
 
 function toggleLyrics() {
-    // Tombol lirik manual hanya berfungsi saat player berukuran mini normal
     if(document.getElementById('spotify-player').classList.contains('expanded')) return;
     document.getElementById('lyrics-panel').classList.toggle('open');
 }
