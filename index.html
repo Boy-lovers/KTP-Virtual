@@ -27,7 +27,7 @@
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Outfit',sans-serif; background:#080810; color:var(--text); overflow-x:hidden; min-height:100vh; transition: background-color 0.5s; }
+        body { font-family:'Outfit',sans-serif; background:#080810; color:var(--text); overflow-x:hidden; min-height:100vh; transition: --accent 0.5s; }
 
         /* ── ANIMATED BG ORBS ── */
         .bg-orbs { position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
@@ -56,7 +56,7 @@
         #loader-bar {
             position:fixed; top:0; left:0; width:0%; height:2px; z-index:9999;
             background:linear-gradient(90deg,var(--accent),var(--accent2));
-            transition:width 0.4s ease;
+            transition:width 0.4s ease, background 0.5s ease;
             box-shadow:0 0 12px var(--tube-glow),0 0 24px var(--tube-glow);
         }
 
@@ -141,10 +141,10 @@
         .page.active { display:block; animation:pageIn 0.4s cubic-bezier(.2,.8,.2,1); }
         @keyframes pageIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
 
-        .container { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; padding:24px 20px 120px; }
+        .container { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; padding:24px 20px 100px; }
 
         /* ── HERO ── */
-        .hero { display:flex; flex-direction:column; align-items:center; padding:70px 20px 40px; text-align:center; }
+        .hero { display:flex; flex-direction:column; align-items:center; padding:40px 20px 20px; text-align:center; width:100%; }
         .hero-icon {
             width:76px; height:76px; border-radius:22px;
             background:linear-gradient(135deg,var(--accent),var(--accent2));
@@ -162,7 +162,7 @@
         .hero p { margin-top:10px; color:var(--text-muted); font-size:15px; max-width:380px; line-height:1.6; }
 
         /* ── VIDEO PLAYER ── */
-        #video-display { width:100%; max-width:920px; display:none; animation:slideDown 0.5s cubic-bezier(.2,.8,.2,1); margin-bottom:24px; }
+        #video-display { width:100%; max-width:920px; display:none; animation:slideDown 0.5s cubic-bezier(.2,.8,.2,1); margin-bottom:10px; }
         @keyframes slideDown { from{opacity:0;transform:translateY(-22px) scale(0.98)} to{opacity:1;transform:translateY(0) scale(1)} }
         .player-glass {
             background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:18px; overflow:hidden;
@@ -176,14 +176,14 @@
 
         /* ── RESULTS LABEL ── */
         .results-label {
-            width:100%; max-width:1200px; display:none; align-items:center; gap:10px;
+            width:100%; max-width:1200px; display:flex; align-items:center; gap:10px;
             margin:18px 0 14px; font-size:12px; color:var(--text-muted); font-weight:600;
             letter-spacing:0.08em; text-transform:uppercase;
         }
         .results-label::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,var(--glass-border),transparent); }
 
         /* ── RESULTS GRID ── */
-        .results-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:16px; width:100%; max-width:1200px; }
+        .results-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(262px,1fr)); gap:16px; width:100%; max-width:1200px; }
 
         /* ── VIDEO CARD ── */
         .video-card {
@@ -201,7 +201,7 @@
         body.music-mode .video-card:hover { box-shadow:0 20px 55px rgba(0,0,0,0.5),0 0 0 1px rgba(29,185,84,0.25); border-color:rgba(29,185,84,0.3); }
 
         .thumb-wrap { position:relative; overflow:hidden; }
-        .thumb-wrap img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; transition:transform 0.4s ease; }
+        .thumb-wrap img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; transition:transform 0.4s ease; background: #151525; }
         .video-card:hover .thumb-wrap img { transform:scale(1.06); }
         .play-overlay { position:absolute; inset:0; background:rgba(0,0,0,0); display:flex; align-items:center; justify-content:center; transition:background 0.3s ease; }
         .play-btn {
@@ -217,7 +217,7 @@
         .card-body { padding:11px 13px 13px; position:relative; z-index:2; }
         .card-body h3 { font-size:13px; font-weight:600; color:rgba(255,255,255,0.9); line-height:1.45; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
         .card-body .channel { font-size:11.5px; color:var(--text-muted); margin-top:5px; display:flex; align-items:center; gap:6px; }
-        .channel-dot { width:5px; height:5px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2)); flex-shrink:0; }
+        .channel-dot { width:5px; height:5px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2)); flex-shrink:0; transition:background 0.5s; }
 
         /* ── MUSIC MINI PLAYER ── */
         #mini-player {
@@ -318,7 +318,7 @@
             </div>
             <h2 id="playing-title"></h2>
         </div>
-        <div class="results-label" id="tube-label">Hasil Pencarian</div>
+        <div class="results-label" id="tube-label">Rekomendasi Video</div>
         <div class="results-grid" id="tube-results"></div>
     </div>
 </div>
@@ -330,7 +330,7 @@
             <h1>Selamat Datang di <span style="background:linear-gradient(90deg,#1db954,#00c9ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">NachynMusic</span></h1>
             <p>Dengarkan musik favoritmu dengan player yang kece</p>
         </div>
-        <div class="results-label" id="music-label">Hasil Pencarian</div>
+        <div class="results-label" id="music-label">Rekomendasi Musik</div>
         <div class="results-grid" id="music-results"></div>
     </div>
 </div>
@@ -356,10 +356,8 @@
     <button class="mini-close" onclick="closeMiniPlayer()" title="Tutup">✕</button>
 </div>
 
-<div id="music-iframe-container" style="position:fixed;bottom:-9999px;left:-9999px;width:1px;height:1px;"></div>
-
 <script>
-// MASUKKAN API KEY BARU KAMU DI BAWAH INI
+// MASUKKAN API KEY BARU KAMU YANG AKTIF DI BAWAH INI (BARIS 222)
 const API_KEY = 'AIzaSyDkxB1zAcA_fRz7Toi_9A68FJhH5eOTBZY'; 
 const loader = document.getElementById('loader-bar');
 let currentPage = 'tube';
@@ -372,14 +370,20 @@ let progressInterval = null;
 let currentSec = 0;
 let durationSec = 0;
 
+// Jalankan otomatis saat web dibuka pertama kali
+window.addEventListener('DOMContentLoaded', () => {
+    loadTrendingVideos();
+    loadTrendingMusic();
+});
+
 // ── LOADER ──
 function showLoading() {
     loader.style.width = '30%';
-    setTimeout(() => { if(loader.style.width === '30%') loader.style.width = '72%'; }, 200);
+    setTimeout(() => loader.style.width = '72%', 200);
 }
 function hideLoading() {
     loader.style.width = '100%';
-    setTimeout(() => { loader.style.width = '0%'; }, 450);
+    setTimeout(() => loader.style.width = '0%', 450);
 }
 
 // ── PAGE SWITCH ──
@@ -411,63 +415,149 @@ function doSearch() {
     else searchMusic();
 }
 
-// ── TUBE SEARCH ──
+// ── BERANDA AWAL VIDEO (TRENDING INDONESIA) ──
+async function loadTrendingVideos() {
+    const grid = document.getElementById('tube-results');
+    try {
+        const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=ID&maxResults=12&key=${API_KEY}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        if (data.error) {
+            grid.innerHTML = `<p style="color:#ff3b3b;grid-column:1/-1;text-align:center;padding:40px;line-height:1.6;">API Error: ${data.error.message}<br><span style="color:var(--text-muted)">Silakan cek atau ganti API Key kamu di baris 222 karena key lama mati/habis kuota.</span></p>`;
+            return;
+        }
+
+        grid.innerHTML = '';
+        data.items.forEach((item, i) => {
+            renderVideoCard(grid, item, i, 'tube');
+        });
+    } catch(e) {
+        grid.innerHTML = '<p style="color:#ff3b3b;grid-column:1/-1;text-align:center;padding:40px">Gagal memuat beranda. Periksa API Key kamu.</p>';
+    }
+}
+
+// ── BERANDA AWAL MUSIK ──
+async function loadTrendingMusic() {
+    const grid = document.getElementById('music-results');
+    try {
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=16&q=lagu%20pop%20indonesia%20terbaru&type=video&key=${API_KEY}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        if (data.error) {
+            grid.innerHTML = `<p style="color:#ff3b3b;grid-column:1/-1;text-align:center;padding:40px">Gagal memuat musik karena masalah API Key.</p>`;
+            return;
+        }
+
+        grid.innerHTML = '';
+        musicQueue = [];
+        data.items.forEach((item, i) => {
+            if(!item.id?.videoId) return;
+            musicQueue.push({
+                id: item.id.videoId,
+                title: item.snippet.title,
+                channel: item.snippet.channelTitle,
+                thumb: item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.medium?.url || ''
+            });
+            renderVideoCard(grid, item, i, 'music');
+        });
+    } catch(e) {
+        grid.innerHTML = '<p style="color:#ff3b3b;grid-column:1/-1;text-align:center;padding:40px">Gagal memuat rekomendasi musik.</p>';
+    }
+}
+
+// ── PILAR UTAMA TUBE SEARCH ──
 async function searchTube() {
     const q = document.getElementById('search-input').value.trim();
     if (!q) return;
     showLoading();
     document.getElementById('tube-hero').style.display = 'none';
-    document.getElementById('tube-label').style.display = 'flex';
+    document.getElementById('tube-label').textContent = 'Hasil Pencarian';
 
     const grid = document.getElementById('tube-results');
-    grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:40px">Memuat data video...</p>';
+    grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:40px">Mencari video...</p>';
 
     try {
         const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=12&q=${encodeURIComponent(q)}&type=video&key=${API_KEY}`;
-        const response = await fetch(url);
-        const data = await response.json();
-        
-        if (data.error) {
-            grid.innerHTML = `<p style="color:#ff3b3b;grid-column:1/-1;text-align:center;padding:40px;line-height:1.6;">Error API: ${data.error.message}.<br><span style="color:var(--text-muted);font-size:13px;">Silakan buat dan masukkan API Key yang valid di dalam script.</span></p>`;
-            hideLoading();
-            return;
-        }
-
+        const data = await (await fetch(url)).json();
         grid.innerHTML = '';
-        if (!data.items || data.items.length === 0) { 
-            grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:40px">Tidak ada hasil ditemukan.</p>'; 
-            hideLoading(); 
-            return; 
-        }
+        if (!data.items?.length) { grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:40px">Tidak ada hasil ditemukan.</p>'; hideLoading(); return; }
         
         data.items.forEach((item, i) => {
-            if (!item.id?.videoId || !item.snippet) return;
-            
-            const vidId = item.id.videoId;
-            const title = item.snippet.title || 'Untitled Video';
-            const channel = item.snippet.channelTitle || 'Unknown Channel';
-            const thumb = item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.medium?.url || '';
-
-            const c = document.createElement('div');
-            c.className = 'video-card';
-            c.style.animationDelay = `${i*0.05}s`;
-            c.innerHTML = `
-                <div class="thumb-wrap">
-                    <img src="${thumb}" alt="" loading="lazy">
-                    <div class="play-overlay"><div class="play-btn">▶</div></div>
-                </div>
-                <div class="card-body">
-                    <h3>${title}</h3>
-                    <div class="channel"><span class="channel-dot"></span>${channel}</div>
-                </div>`;
-            c.onclick = () => playTubeVideo(vidId, title);
-            grid.appendChild(c);
+            if(item.id?.videoId) renderVideoCard(grid, item, i, 'tube');
         });
-    } catch(e) { 
-        console.error(e);
-        grid.innerHTML = '<p style="color:#ff3b3b;grid-column:1/-1;text-align:center;padding:40px">Gagal menyambung. Cek koneksi internet atau setelan API Key.</p>';
-    }
+    } catch(e) { grid.innerHTML = '<p style="color:#ff3b3b;grid-column:1/-1;text-align:center;padding:40px">Error koneksi / Gagal memuat.</p>'; }
     hideLoading();
+}
+
+// ── PILAR UTAMA MUSIC SEARCH ──
+async function searchMusic() {
+    const q = document.getElementById('search-input').value.trim();
+    if (!q) return;
+    showLoading();
+    document.getElementById('music-hero').style.display = 'none';
+    document.getElementById('music-label').textContent = 'Hasil Pencarian';
+
+    const grid = document.getElementById('music-results');
+    grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:40px">Mencari musik...</p>';
+
+    try {
+        // DIKOREKSI: Menghapus videoCategoryId agar pencarian lagu tidak dibatasi ketat oleh YouTube
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=16&q=${encodeURIComponent(q + ' music')}&type=video&key=${API_KEY}`;
+        const data = await (await fetch(url)).json();
+        grid.innerHTML = '';
+        musicQueue = [];
+        if (!data.items?.length) { grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:40px">Tidak ada hasil ditemukan.</p>'; hideLoading(); return; }
+
+        data.items.forEach((item, i) => {
+            if(!item.id?.videoId) return;
+            musicQueue.push({
+                id: item.id.videoId,
+                title: item.snippet.title,
+                channel: item.snippet.channelTitle,
+                thumb: item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.medium?.url || ''
+            });
+            renderVideoCard(grid, item, i, 'music');
+        });
+    } catch(e) { grid.innerHTML = '<p style="color:#ff3b3b;grid-column:1/-1;text-align:center;padding:40px">Error saat mencari musik.</p>'; }
+    hideLoading();
+}
+
+// HELPER: RENDER KARTU VIDEO
+function renderVideoCard(grid, item, i, mode) {
+    const title = item.snippet?.title || 'No Title';
+    const channel = item.snippet?.channelTitle || 'Unknown Channel';
+    const thumb = item.snippet?.thumbnails?.high?.url || item.snippet?.thumbnails?.medium?.url || '';
+    const id = item.id?.videoId || item.id; // handle search vs video list object response
+
+    if(!id) return;
+
+    const c = document.createElement('div');
+    c.className = 'video-card';
+    c.style.animationDelay = `${i*0.04}s`;
+    
+    const iconPlay = mode === 'tube' ? '▶' : '♪';
+    const gradientOverlay = mode === 'tube' ? '' : 'style="background:linear-gradient(135deg,#1db954,#00c9ff)"';
+    const dotGradient = mode === 'tube' ? '' : 'style="background:linear-gradient(135deg,#1db954,#00c9ff)"';
+
+    c.innerHTML = `
+        <div class="thumb-wrap">
+            <img src="${thumb}" alt="" loading="lazy">
+            <div class="play-overlay"><div class="play-btn" ${gradientOverlay}>${iconPlay}</div></div>
+        </div>
+        <div class="card-body">
+            <h3>${title}</h3>
+            <div class="channel"><span class="channel-dot" ${dotGradient}></span>${channel}</div>
+        </div>`;
+    
+    if (mode === 'tube') {
+        c.onclick = () => playTubeVideo(id, title);
+    } else {
+        const queueIndex = musicQueue.findIndex(m => m.id === id);
+        c.onclick = () => playMusicTrack(queueIndex >= 0 ? queueIndex : 0);
+    }
+    grid.appendChild(c);
 }
 
 function playTubeVideo(id, title) {
@@ -478,77 +568,6 @@ function playTubeVideo(id, title) {
     document.getElementById('playing-title').innerText = title;
     document.getElementById('player').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" allow="autoplay;encrypted-media" allowfullscreen></iframe>`;
     window.scrollTo({top:0, behavior:'smooth'});
-    hideLoading();
-}
-
-// ── MUSIC SEARCH ──
-async function searchMusic() {
-    const q = document.getElementById('search-input').value.trim();
-    if (!q) return;
-    showLoading();
-    document.getElementById('music-hero').style.display = 'none';
-    document.getElementById('music-label').style.display = 'flex';
-
-    const grid = document.getElementById('music-results');
-    grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:40px">Memuat data musik...</p>';
-
-    try {
-        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=16&q=${encodeURIComponent(q + ' music')}&type=video&key=${API_KEY}`;
-        const response = await fetch(url);
-        const data = await response.json();
-        
-        if (data.error) {
-            grid.innerHTML = `<p style="color:#ff3b3b;grid-column:1/-1;text-align:center;padding:40px;line-height:1.6;">Error API: ${data.error.message}.<br><span style="color:var(--text-muted);font-size:13px;">Silakan buat dan masukkan API Key yang valid di dalam script.</span></p>`;
-            hideLoading();
-            return;
-        }
-
-        grid.innerHTML = '';
-        musicQueue = [];
-        
-        if (!data.items || data.items.length === 0) { 
-            grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:40px">Tidak ada hasil ditemukan.</p>'; 
-            hideLoading(); 
-            return; 
-        }
-
-        let addedCount = 0;
-        data.items.forEach((item) => {
-            if (!item.id?.videoId || !item.snippet) return;
-            
-            const vidId = item.id.videoId;
-            const title = item.snippet.title || 'Untitled Track';
-            const channel = item.snippet.channelTitle || 'Unknown Artist';
-            const thumb = item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.medium?.url || '';
-
-            musicQueue.push({
-                id: vidId,
-                title: title,
-                channel: channel,
-                thumb: thumb
-            });
-
-            const currentIndex = addedCount;
-            const c = document.createElement('div');
-            c.className = 'video-card';
-            c.style.animationDelay = `${currentIndex*0.05}s`;
-            c.innerHTML = `
-                <div class="thumb-wrap">
-                    <img src="${thumb}" alt="" loading="lazy">
-                    <div class="play-overlay"><div class="play-btn" style="background:linear-gradient(135deg,#1db954,#00c9ff)">♪</div></div>
-                </div>
-                <div class="card-body">
-                    <h3>${title}</h3>
-                    <div class="channel"><span class="channel-dot" style="background:linear-gradient(135deg,#1db954,#00c9ff)"></span>${channel}</div>
-                </div>`;
-            c.onclick = () => playMusicTrack(currentIndex);
-            grid.appendChild(c);
-            addedCount++;
-        });
-    } catch(e) { 
-        console.error(e);
-        grid.innerHTML = '<p style="color:#ff3b3b;grid-column:1/-1;text-align:center;padding:40px">Gagal memuat musik. Periksa koneksi atau API Key.</p>';
-    }
     hideLoading();
 }
 
@@ -568,17 +587,22 @@ function playMusicTrack(idx) {
     isPlaying = true;
 
     // Reset progress
-    currentSec = 0; 
-    durationSec = 210; // default ~3.5 min estimate
+    currentSec = 0; durationSec = 210; // default ~3.5 min
     document.getElementById('prog-fill').style.width = '0%';
     document.getElementById('time-cur').textContent = '0:00';
     document.getElementById('time-dur').textContent = fmtTime(durationSec);
 
-    // Create hidden iframe player
-    const container = document.getElementById('music-iframe-container');
-    container.innerHTML = `<iframe id="music-iframe" src="https://www.youtube.com/embed/${track.id}?autoplay=1&enablejsapi=1" allow="autoplay;encrypted-media" allowfullscreen></iframe>`;
+    // Hidden iframe container
+    let container = document.getElementById('music-iframe-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'music-iframe-container';
+        container.style.cssText = 'position:fixed;bottom:-9999px;left:-9999px;width:1px;height:1px;';
+        document.body.appendChild(container);
+    }
+    container.innerHTML = `<iframe id="music-iframe" src="https://www.youtube.com/embed/${track.id}?autoplay=1&enablejsapi=1" allow="autoplay;encrypted-media"></iframe>`;
 
-    // Simulate progress
+    // Simulate progress Bar
     clearInterval(progressInterval);
     progressInterval = setInterval(() => {
         if (!isPlaying) return;
@@ -600,9 +624,9 @@ function togglePlay() {
     document.getElementById('pp-btn').textContent = isPlaying ? '⏸' : '▶';
     const iframe = document.getElementById('music-iframe');
     if (iframe) {
-        // Kontrol postMessage YouTube Player API untuk pause/play tanpa render ulang iframe
-        const command = isPlaying ? 'playVideo' : 'pauseVideo';
-        iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: command, args: [] }), '*');
+        const src = iframe.src;
+        if (!isPlaying) iframe.src = '';
+        else iframe.src = src || `https://www.youtube.com/embed/${musicQueue[currentTrackIdx]?.id}?autoplay=1&enablejsapi=1`;
     }
 }
 
@@ -634,13 +658,12 @@ function closeMiniPlayer() {
     document.querySelectorAll('#music-results .video-card').forEach(c => { c.style.borderColor=''; c.style.boxShadow=''; });
 }
 
-// Format waktu detik ke M:SS
 function fmtTime(s) {
     const m = Math.floor(s/60);
     return `${m}:${String(Math.floor(s%60)).padStart(2,'0')}`;
 }
 
-// ── ENTER KEY SEARCH ──
+// ── ENTER KEY ──
 document.getElementById('search-input').addEventListener('keypress', e => {
     if (e.key === 'Enter') doSearch();
 });
