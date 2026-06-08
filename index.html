@@ -141,7 +141,7 @@
         .page.active { display:block; animation:pageIn 0.4s cubic-bezier(.2,.8,.2,1); }
         @keyframes pageIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
 
-        .container { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; padding:24px 20px 100px; }
+        .container { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; padding:24px 20px 120px; }
 
         /* ── HERO ── */
         .hero { display:flex; flex-direction:column; align-items:center; padding:40px 20px 20px; text-align:center; width:100%; }
@@ -219,44 +219,47 @@
         .card-body .channel { font-size:11.5px; color:var(--text-muted); margin-top:5px; display:flex; align-items:center; gap:6px; }
         .channel-dot { width:5px; height:5px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2)); flex-shrink:0; transition:background 0.5s; }
 
-        /* ── MUSIC MINI PLAYER ── */
+        /* ── FIX: RE-DESIGN MINI PLAYER DI KANAN BAWAH ── */
         #mini-player {
-            position:fixed; bottom:0; left:0; right:0; z-index:300;
-            background:rgba(8,8,16,0.85); backdrop-filter:blur(28px) saturate(180%);
-            border-top:1px solid rgba(29,185,84,0.25);
-            padding:10px 28px; display:none;
-            align-items:center; gap:20px;
-            box-shadow:0 -8px 40px rgba(0,0,0,0.5);
+            position:fixed; bottom:24px; right:24px; z-index:300;
+            width:350px; flex-direction:column; gap:12px;
+            background:rgba(15,15,25,0.85); backdrop-filter:blur(28px) saturate(180%);
+            border:1px solid rgba(255,255,255,0.12); border-radius:18px;
+            padding:16px; display:none;
+            box-shadow:0 12px 40px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1);
             animation:playerIn 0.4s cubic-bezier(.2,.8,.2,1);
         }
-        @keyframes playerIn { from{transform:translateY(80px);opacity:0} to{transform:translateY(0);opacity:1} }
+        body.music-mode #mini-player { border-color: rgba(29,185,84,0.3); }
+        @keyframes playerIn { from{transform:translateY(40px) scale(0.95);opacity:0} to{transform:translateY(0) scale(1);opacity:1} }
 
-        .mini-thumb { width:48px; height:48px; border-radius:10px; object-fit:cover; flex-shrink:0; border:1px solid var(--glass-border); }
+        .mini-main-info { display:flex; align-items:center; gap:14px; width:100%; }
+        .mini-thumb { width:54px; height:54px; border-radius:10px; object-fit:cover; flex-shrink:0; border:1px solid var(--glass-border); }
         .mini-info { flex:1; min-width:0; }
-        .mini-title { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-        .mini-channel { font-size:11px; color:var(--text-muted); margin-top:2px; }
+        .mini-title { font-size:13.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#fff; }
+        .mini-channel { font-size:11.5px; color:var(--text-muted); margin-top:2px; }
 
-        .mini-controls { display:flex; align-items:center; gap:12px; }
+        .mini-controls-row { display:flex; justify-content:center; align-items:center; gap:16px; width:100%; margin-top:4px; }
         .ctrl-btn {
             width:36px; height:36px; border-radius:50%; border:none; cursor:pointer;
-            background:rgba(255,255,255,0.08); color:white; font-size:14px;
+            background:rgba(255,255,255,0.06); color:white; font-size:14px;
             display:flex; align-items:center; justify-content:center;
             transition:all 0.2s ease;
         }
-        .ctrl-btn:hover { background:rgba(29,185,84,0.3); transform:scale(1.1); }
+        .ctrl-btn:hover { background:rgba(255,255,255,0.15); transform:scale(1.08); }
+        body.music-mode .ctrl-btn:hover { background:rgba(29,185,84,0.25); color:#1db954; }
         .ctrl-btn.play-pause {
             width:42px; height:42px; font-size:16px;
-            background:linear-gradient(135deg,#1db954,#00c9ff);
-            box-shadow:0 4px 18px rgba(29,185,84,0.4);
+            background:linear-gradient(135deg,var(--accent),var(--accent2));
+            box-shadow:0 4px 18px var(--tube-glow);
         }
-        .ctrl-btn.play-pause:hover { filter:brightness(1.15); transform:scale(1.08); }
+        .ctrl-btn.play-pause:hover { filter:brightness(1.15); transform:scale(1.06); }
 
-        .mini-progress { flex:2; max-width:300px; display:flex; align-items:center; gap:8px; }
-        .progress-bar { flex:1; height:4px; background:rgba(255,255,255,0.15); border-radius:2px; cursor:pointer; position:relative; overflow:hidden; }
-        .progress-fill { height:100%; background:linear-gradient(90deg,#1db954,#00c9ff); border-radius:2px; width:0%; transition:width 0.5s linear; }
-        .time-label { font-size:11px; color:var(--text-muted); white-space:nowrap; }
+        .mini-progress-row { width:100%; display:flex; align-items:center; gap:10px; margin-top:4px; }
+        .progress-bar { flex:1; height:4px; background:rgba(255,255,255,0.15); border-radius:2px; cursor:pointer; position:relative; }
+        .progress-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:2px; width:0%; }
+        .time-label { font-size:11px; color:var(--text-muted); white-space:nowrap; font-family:monospace; }
 
-        .mini-close { width:28px; height:28px; border-radius:50%; border:none; cursor:pointer; background:rgba(255,255,255,0.06); color:var(--text-muted); font-size:12px; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+        .mini-close { position:absolute; top:12px; right:12px; width:24px; height:24px; border-radius:50%; border:none; cursor:pointer; background:rgba(255,255,255,0.06); color:var(--text-muted); font-size:10px; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
         .mini-close:hover { background:rgba(255,59,59,0.25); color:white; }
 
         /* ── SCROLLBAR ── */
@@ -265,11 +268,11 @@
         ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.13); border-radius:3px; }
         ::-webkit-scrollbar-thumb:hover { background:rgba(255,59,59,0.4); }
 
-        @media(max-width:680px) {
+        @media(max-width:480px) {
             nav { flex-wrap:wrap; height:auto; padding:10px 14px; gap:8px; justify-content: center; }
             .search-container { width:100%; order:3; }
             .nav-tabs { order:2; }
-            .mini-progress { display:none; }
+            #mini-player { width:calc(100% - 32px); bottom:16px; right:16px; }
         }
     </style>
 </head>
@@ -336,28 +339,32 @@
 </div>
 
 <div id="mini-player">
-    <img class="mini-thumb" id="mini-thumb" src="" alt="">
-    <div class="mini-info">
-        <div class="mini-title" id="mini-title">—</div>
-        <div class="mini-channel" id="mini-channel">—</div>
+    <button class="mini-close" onclick="closeMiniPlayer()" title="Tutup">✕</button>
+    <div class="mini-main-info">
+        <img class="mini-thumb" id="mini-thumb" src="" alt="">
+        <div class="mini-info">
+            <div class="mini-title" id="mini-title">—</div>
+            <div class="mini-channel" id="mini-channel">—</div>
+        </div>
     </div>
-    <div class="mini-controls">
-        <button class="ctrl-btn" onclick="prevTrack()" title="Sebelumnya">⏮</button>
-        <button class="ctrl-btn play-pause" id="pp-btn" onclick="togglePlay()">⏸</button>
-        <button class="ctrl-btn" onclick="nextTrack()" title="Berikutnya">⏭</button>
-    </div>
-    <div class="mini-progress">
+    
+    <div class="mini-progress-row">
         <span class="time-label" id="time-cur">0:00</span>
         <div class="progress-bar" id="prog-bar" onclick="seekTrack(event)">
             <div class="progress-fill" id="prog-fill"></div>
         </div>
         <span class="time-label" id="time-dur">0:00</span>
     </div>
-    <button class="mini-close" onclick="closeMiniPlayer()" title="Tutup">✕</button>
+
+    <div class="mini-controls-row">
+        <button class="ctrl-btn" onclick="prevTrack()" title="Sebelumnya">⏮</button>
+        <button class="ctrl-btn play-pause" id="pp-btn" onclick="togglePlay()">⏸</button>
+        <button class="ctrl-btn" onclick="nextTrack()" title="Berikutnya">⏭</button>
+    </div>
 </div>
 
 <script>
-// MASUKKAN API KEY BARU KAMU YANG AKTIF DI BAWAH INI (BARIS 222)
+// MASUKKAN API KEY BARU KAMU YANG AKTIF DI BAWAH INI (BARIS 219)
 const API_KEY = 'AIzaSyDkxB1zAcA_fRz7Toi_9A68FJhH5eOTBZY'; 
 const loader = document.getElementById('loader-bar');
 let currentPage = 'tube';
@@ -370,7 +377,6 @@ let progressInterval = null;
 let currentSec = 0;
 let durationSec = 0;
 
-// Jalankan otomatis saat web dibuka pertama kali
 window.addEventListener('DOMContentLoaded', () => {
     loadTrendingVideos();
     loadTrendingMusic();
@@ -424,7 +430,7 @@ async function loadTrendingVideos() {
         const data = await res.json();
         
         if (data.error) {
-            grid.innerHTML = `<p style="color:#ff3b3b;grid-column:1/-1;text-align:center;padding:40px;line-height:1.6;">API Error: ${data.error.message}<br><span style="color:var(--text-muted)">Silakan cek atau ganti API Key kamu di baris 222 karena key lama mati/habis kuota.</span></p>`;
+            grid.innerHTML = `<p style="color:#ff3b3b;grid-column:1/-1;text-align:center;padding:40px;line-height:1.6;">API Error: ${data.error.message}<br><span style="color:var(--text-muted)">Silakan masukkan API Key baru kamu yang aktif di dalam script baris 219.</span></p>`;
             return;
         }
 
@@ -467,7 +473,7 @@ async function loadTrendingMusic() {
     }
 }
 
-// ── PILAR UTAMA TUBE SEARCH ──
+// ── TUBE SEARCH ──
 async function searchTube() {
     const q = document.getElementById('search-input').value.trim();
     if (!q) return;
@@ -491,7 +497,7 @@ async function searchTube() {
     hideLoading();
 }
 
-// ── PILAR UTAMA MUSIC SEARCH ──
+// ── MUSIC SEARCH ──
 async function searchMusic() {
     const q = document.getElementById('search-input').value.trim();
     if (!q) return;
@@ -503,7 +509,6 @@ async function searchMusic() {
     grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:40px">Mencari musik...</p>';
 
     try {
-        // DIKOREKSI: Menghapus videoCategoryId agar pencarian lagu tidak dibatasi ketat oleh YouTube
         const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=16&q=${encodeURIComponent(q + ' music')}&type=video&key=${API_KEY}`;
         const data = await (await fetch(url)).json();
         grid.innerHTML = '';
@@ -529,7 +534,7 @@ function renderVideoCard(grid, item, i, mode) {
     const title = item.snippet?.title || 'No Title';
     const channel = item.snippet?.channelTitle || 'Unknown Channel';
     const thumb = item.snippet?.thumbnails?.high?.url || item.snippet?.thumbnails?.medium?.url || '';
-    const id = item.id?.videoId || item.id; // handle search vs video list object response
+    const id = item.id?.videoId || item.id;
 
     if(!id) return;
 
@@ -560,13 +565,14 @@ function renderVideoCard(grid, item, i, mode) {
     grid.appendChild(c);
 }
 
+// FIX: DI SINI FULL SCREEN DIBERI IZIN (allowfullscreen)
 function playTubeVideo(id, title) {
     showLoading();
     const display = document.getElementById('video-display');
     display.style.display = 'block';
     display.style.animation = 'none'; void display.offsetWidth; display.style.animation = 'slideDown 0.5s cubic-bezier(.2,.8,.2,1)';
     document.getElementById('playing-title').innerText = title;
-    document.getElementById('player').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" allow="autoplay;encrypted-media" allowfullscreen></iframe>`;
+    document.getElementById('player').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
     window.scrollTo({top:0, behavior:'smooth'});
     hideLoading();
 }
@@ -577,7 +583,7 @@ function playMusicTrack(idx) {
     const track = musicQueue[idx];
     if (!track) return;
 
-    // Show mini player
+    // Show floating mini player
     const mp = document.getElementById('mini-player');
     mp.style.display = 'flex';
     document.getElementById('mini-thumb').src = track.thumb;
@@ -587,12 +593,12 @@ function playMusicTrack(idx) {
     isPlaying = true;
 
     // Reset progress
-    currentSec = 0; durationSec = 210; // default ~3.5 min
+    currentSec = 0; durationSec = 210; 
     document.getElementById('prog-fill').style.width = '0%';
     document.getElementById('time-cur').textContent = '0:00';
     document.getElementById('time-dur').textContent = fmtTime(durationSec);
 
-    // Hidden iframe container
+    // FIX: TAMBAHKAN allowfullscreen AGAR FITUR FULL SCREEN MUSIK BISA AKTIF JUGA
     let container = document.getElementById('music-iframe-container');
     if (!container) {
         container = document.createElement('div');
@@ -600,7 +606,7 @@ function playMusicTrack(idx) {
         container.style.cssText = 'position:fixed;bottom:-9999px;left:-9999px;width:1px;height:1px;';
         document.body.appendChild(container);
     }
-    container.innerHTML = `<iframe id="music-iframe" src="https://www.youtube.com/embed/${track.id}?autoplay=1&enablejsapi=1" allow="autoplay;encrypted-media"></iframe>`;
+    container.innerHTML = `<iframe id="music-iframe" src="https://www.youtube.com/embed/${track.id}?autoplay=1&enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
 
     // Simulate progress Bar
     clearInterval(progressInterval);
@@ -614,8 +620,8 @@ function playMusicTrack(idx) {
 
     // Highlight active card
     document.querySelectorAll('#music-results .video-card').forEach((c,i) => {
-        c.style.borderColor = i === idx ? 'rgba(29,185,84,0.5)' : '';
-        c.style.boxShadow = i === idx ? '0 0 20px rgba(29,185,84,0.2)' : '';
+        c.style.borderColor = i === idx ? 'var(--accent)' : '';
+        c.style.boxShadow = i === idx ? '0 0 20px var(--tube-glow)' : '';
     });
 }
 
