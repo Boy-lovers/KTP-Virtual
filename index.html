@@ -3,612 +3,635 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nachyn - Premium Glass Streaming</title>
+    <title>NachynTube - Premium Streaming</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://www.youtube.com/iframe_api"></script>
     <style>
         :root {
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-card: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.09);
-            --glass-panel: rgba(18, 18, 24, 0.75);
+            --glass-bg: rgba(255,255,255,0.06);
+            --glass-border: rgba(255,255,255,0.12);
             --tube-accent: #ff3b3b;
-            --tube-glow: rgba(255,59,59,0.3);
-            --music-accent: #1db954; 
-            --music-glow: rgba(29,185,84,0.3);
-            --text: #f5f5fa;
+            --tube-glow: rgba(255,59,59,0.45);
+            --tube-accent2: #ff8c42;
+            --music-accent: #1db954;
+            --music-glow: rgba(29,185,84,0.45);
+            --music-accent2: #00c9ff;
+            --text: #f0f0f0;
             --text-muted: rgba(255,255,255,0.45);
             --accent: #ff3b3b;
             --accent2: #ff8c42;
-            --bg-color: #0b0b12;
         }
         body.music-mode {
-            --accent: var(--music-accent);
-            --accent2: #1ed760;
-            --bg-color: #070907; 
+            --accent: #1db954;
+            --accent2: #00c9ff;
+            --tube-glow: rgba(29,185,84,0.45);
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Outfit',sans-serif; background:var(--bg-color); color:var(--text); overflow-x:hidden; min-height:100vh; transition: background 0.6s ease; }
+        body { font-family:'Outfit',sans-serif; background:#080810; color:var(--text); overflow-x:hidden; min-height:100vh; transition: background-color 0.5s; }
 
-        /* ── ANIMASI LOADING SPLASH SCREEN AWAL ── */
-        #splash-screen {
-            position: fixed; inset: 0; background: #080810; z-index: 999999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.6s ease;
-        }
-        .splash-logo {
-            font-size: 38px; font-weight: 800; display: flex; align-items: center; gap: 8px; color: #fff;
-            animation: pulseSplash 1.4s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .splash-logo span:last-child {
-            padding: 4px 14px; border-radius: 10px; color: white;
-            background: linear-gradient(135deg, var(--tube-accent), var(--music-accent));
-            box-shadow: 0 0 20px rgba(255, 59, 59, 0.2);
-        }
-        .splash-loader {
-            margin-top: 28px; width: 220px; height: 5px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .splash-loader-bar {
-            height: 100%; width: 0%; background: linear-gradient(90deg, var(--tube-accent), var(--music-accent));
-            animation: loadSplash 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-        @keyframes pulseSplash { from { transform: scale(0.95); opacity: 0.75; } to { transform: scale(1.03); opacity: 1; } }
-        @keyframes loadSplash { 0% { width: 0%; } 60% { width: 65%; } 100% { width: 100%; } }
-
-        /* ── TAB LOADING TRANSITION ── */
-        #tab-loader {
-            position: fixed; inset: 0; background: rgba(8, 8, 14, 0.65); backdrop-filter: blur(20px);
-            z-index: 99999; display: none; align-items: center; justify-content: center; opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .spinner {
-            width: 48px; height: 48px; border: 4px solid rgba(255,255,255,0.08);
-            border-top-color: var(--accent); border-radius: 50%; animation: spin 0.65s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* ── BACKGROUND GLOW ORBS ── */
+        /* ── ANIMATED BG ORBS ── */
         .bg-orbs { position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
-        .orb { position:absolute; border-radius:50%; filter:blur(110px); opacity:0.13; transition: background 0.8s ease; }
-        .orb-1 { width:550px;height:550px; background:radial-gradient(circle,var(--accent),transparent); top:-180px;left:-120px; }
-        .orb-2 { width:450px;height:450px; background:radial-gradient(circle,#7b2fff,transparent); top:35%;right:-150px; }
+        .orb { position:absolute; border-radius:50%; filter:blur(80px); opacity:0.16; animation:orbFloat linear infinite; transition: background 0.8s ease; }
+        .orb-1 { width:500px;height:500px; background:radial-gradient(circle,#ff3b3b,transparent); top:-150px;left:-100px; animation-duration:20s; }
+        .orb-2 { width:400px;height:400px; background:radial-gradient(circle,#7b2fff,transparent); top:40%;right:-120px; animation-duration:25s;animation-delay:-8s; }
+        .orb-3 { width:350px;height:350px; background:radial-gradient(circle,#ff8c42,transparent); bottom:-100px;left:30%; animation-duration:18s;animation-delay:-5s; }
+        .orb-4 { width:300px;height:300px; background:radial-gradient(circle,#00c9ff,transparent); top:20%;left:50%; animation-duration:22s;animation-delay:-12s; }
 
-        /* ── NAVBAR KACA NYALA ── */
+        body.music-mode .orb-1 { background:radial-gradient(circle,#1db954,transparent); }
+        body.music-mode .orb-3 { background:radial-gradient(circle,#00c9ff,transparent); }
+
+        @keyframes orbFloat {
+            0%   { transform:translate(0,0) scale(1); }
+            33%  { transform:translate(40px,-30px) scale(1.08); }
+            66%  { transform:translate(-30px,50px) scale(0.95); }
+            100% { transform:translate(0,0) scale(1); }
+        }
+        body::before {
+            content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+            background-image: linear-gradient(rgba(255,255,255,0.022) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.022) 1px,transparent 1px);
+            background-size:40px 40px;
+        }
+
+        /* ── LOADER ── */
+        #loader-bar {
+            position:fixed; top:0; left:0; width:0%; height:2px; z-index:9999;
+            background:linear-gradient(90deg,var(--accent),var(--accent2));
+            transition:width 0.4s ease;
+            box-shadow:0 0 12px var(--tube-glow),0 0 24px var(--tube-glow);
+        }
+
+        /* ── NAVBAR ── */
         nav {
-            position:sticky; top:0; z-index:200; display:flex; justify-content:space-between; align-items:center;
-            padding:0 24px; height:66px; background: rgba(12, 12, 18, 0.45); backdrop-filter: blur(25px);
-            border-bottom:1px solid var(--glass-border); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            position:sticky; top:0; z-index:200;
+            display:flex; justify-content:space-between; align-items:center;
+            padding:0 28px; height:58px;
+            background:rgba(8,8,16,0.75);
+            backdrop-filter:blur(24px) saturate(180%);
+            border-bottom:1px solid var(--glass-border);
+            box-shadow:0 4px 32px rgba(0,0,0,0.5);
         }
-        .logo { font-size:23px; font-weight:800; display:flex; align-items:center; gap:6px; cursor: pointer; color: #fff; }
+
+        /* Logo */
+        .logo { font-size:21px; font-weight:800; letter-spacing:-0.5px; display:flex; align-items:center; gap:2px; }
+        .logo-name { color:#fff; transition:opacity 0.3s; }
         .logo-badge {
-            padding:3px 10px; border-radius:8px; color:white; font-size: 12.5px; font-weight: 700;
-            background:linear-gradient(135deg,var(--accent),var(--accent2)); box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            padding:2px 8px; border-radius:6px; color:white; position:relative; overflow:hidden;
+            background:linear-gradient(135deg,var(--accent),var(--accent2));
+            transition:background 0.5s ease;
         }
-        .nav-tabs { display:flex; gap:8px; background: rgba(255,255,255,0.04); padding: 4px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.05); }
+        .logo-badge::after {
+            content:''; position:absolute; inset:0;
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);
+            transform:translateX(-100%); animation:logoShine 3.5s ease-in-out infinite;
+        }
+        @keyframes logoShine { 0%,70%{transform:translateX(-100%)} 80%,100%{transform:translateX(100%)} }
+
+        /* ── NAV TABS ── */
+        .nav-tabs { display:flex; gap:4px; }
         .nav-tab {
-            display:flex; align-items:center; gap:6px; padding:8px 18px; border-radius:20px; cursor:pointer;
-            font-size:13.5px; font-weight:600; color:var(--text-muted); transition:all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            display:flex; align-items:center; gap:7px;
+            padding:7px 16px; border-radius:20px; cursor:pointer;
+            font-size:13.5px; font-weight:600; letter-spacing:0.02em;
+            border:1px solid transparent;
+            transition:all 0.3s cubic-bezier(.2,.8,.2,1);
+            color:var(--text-muted); background:transparent;
+            white-space:nowrap;
         }
-        .nav-tab.active { color:#fff; background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); }
-        body.music-mode .nav-tab.music-tab.active { background: var(--music-accent); color: #000; border-color: transparent; }
+        .nav-tab .tab-icon { font-size:15px; transition:transform 0.3s ease; }
+        .nav-tab:hover { color:var(--text); background:rgba(255,255,255,0.07); border-color:var(--glass-border); }
+        .nav-tab:hover .tab-icon { transform:scale(1.2); }
 
-        .search-container { display:flex; width:30%; min-width: 270px; }
+        .nav-tab.tube-tab.active {
+            color:#fff;
+            background:linear-gradient(135deg,rgba(255,59,59,0.2),rgba(255,140,66,0.15));
+            border-color:rgba(255,59,59,0.4);
+            box-shadow:0 0 16px rgba(255,59,59,0.2);
+        }
+        .nav-tab.music-tab.active {
+            color:#fff;
+            background:linear-gradient(135deg,rgba(29,185,84,0.2),rgba(0,201,255,0.15));
+            border-color:rgba(29,185,84,0.4);
+            box-shadow:0 0 16px rgba(29,185,84,0.2);
+        }
+
+        /* Search */
+        .search-container { display:flex; width:36%; }
         .search-container input {
-            flex:1; padding:10px 18px; background:rgba(255,255,255,0.04); border:1px solid var(--glass-border); color:white; 
-            font-family:'Outfit',sans-serif; font-size:14px; border-radius:24px 0 0 24px; outline:none; border-right: none;
-            backdrop-filter: blur(10px); transition: background 0.3s;
+            flex:1; padding:9px 16px;
+            background:rgba(255,255,255,0.06); border:1px solid var(--glass-border); border-right:none;
+            color:white; font-family:'Outfit',sans-serif; font-size:13.5px;
+            border-radius:22px 0 0 22px; outline:none; backdrop-filter:blur(10px);
+            transition:all 0.3s ease;
         }
-        .search-container input:focus { background: rgba(255,255,255,0.08); }
+        .search-container input::placeholder { color:var(--text-muted); }
+        .search-container input:focus { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.25); }
         .search-container button {
-            padding:10px 22px; background:var(--accent); border:none; color:white; font-family:'Outfit',sans-serif;
-            font-weight:600; border-radius:0 24px 24px 0; cursor:pointer; transition:all 0.3s;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            padding:9px 20px;
+            background:linear-gradient(135deg,var(--accent),var(--accent2));
+            border:none; color:white; font-family:'Outfit',sans-serif;
+            font-size:13px; font-weight:600;
+            border-radius:0 22px 22px 0; cursor:pointer;
+            transition:all 0.3s ease; position:relative; overflow:hidden;
         }
+        .search-container button:hover { filter:brightness(1.15); box-shadow:0 0 20px var(--tube-glow); }
+        .search-container button:active { transform:scale(0.97); }
 
-        /* ── GRID SYSTEM ── */
+        /* ── PAGES ── */
         .page { display:none; }
-        .page.active { display:block; animation: pageFade 0.45s ease; }
-        @keyframes pageFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .container { padding:24px; max-width: 1350px; margin: 0 auto; }
+        .page.active { display:block; animation:pageIn 0.4s cubic-bezier(.2,.8,.2,1); }
+        @keyframes pageIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
 
-        /* ── LAYOUT TUBE KACA (YOUTUBE MODE) ── */
-        .tube-main-layout { display: grid; grid-template-columns: 1fr; gap: 28px; width: 100%; margin-bottom: 40px; }
-        
-        #video-display { display: none; width: 100%; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        #video-display.floating {
-            position: fixed; bottom: 94px; right: 24px; width: 320px; z-index: 1000; margin: 0;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8); border: 2px solid rgba(255,255,255,0.12); border-radius: 14px; overflow: hidden;
-            backdrop-filter: blur(15px); background: rgba(10,10,15,0.85); animation: floatFlyIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        .container { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; padding:24px 20px 120px; }
+
+        /* ── HERO ── */
+        .hero { display:flex; flex-direction:column; align-items:center; padding:70px 20px 40px; text-align:center; }
+        .hero-icon {
+            width:76px; height:76px; border-radius:22px;
+            background:linear-gradient(135deg,var(--accent),var(--accent2));
+            display:flex; align-items:center; justify-content:center;
+            font-size:34px; margin-bottom:22px;
+            box-shadow:0 20px 60px rgba(255,59,59,0.3);
+            animation:heroIconPulse 3s ease-in-out infinite;
+            transition:background 0.5s ease, box-shadow 0.5s ease;
         }
-        @keyframes floatFlyIn { from { transform: scale(0.85) translateY(30px); opacity:0; } to { transform: scale(1) translateY(0); opacity:1; } }
+        @keyframes heroIconPulse {
+            0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)}
+        }
+        .hero h1 { font-size:38px; font-weight:800; letter-spacing:-1px; }
+        .hero h1 span { background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; transition:all 0.5s; }
+        .hero p { margin-top:10px; color:var(--text-muted); font-size:15px; max-width:380px; line-height:1.6; }
 
-        #video-display.floating .tube-details,
-        #video-display.floating .related-section { display: none !important; }
-        #video-display.floating .player-wrapper { border-radius: 12px; }
-
-        .player-wrapper { position:relative; padding-top:56.25%; border-radius:18px; overflow:hidden; background:#000; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        /* ── VIDEO PLAYER ── */
+        #video-display { width:100%; max-width:920px; display:none; animation:slideDown 0.5s cubic-bezier(.2,.8,.2,1); margin-bottom:24px; }
+        @keyframes slideDown { from{opacity:0;transform:translateY(-22px) scale(0.98)} to{opacity:1;transform:translateY(0) scale(1)} }
+        .player-glass {
+            background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:18px; overflow:hidden;
+            backdrop-filter:blur(20px);
+            box-shadow:0 24px 80px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.04),inset 0 1px 0 rgba(255,255,255,0.07);
+            padding:3px;
+        }
+        .player-wrapper { position:relative; padding-top:56.25%; border-radius:15px; overflow:hidden; background:#000; }
         .player-wrapper iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; }
-        
-        .tube-details { margin-top: 18px; border-bottom: 1px solid var(--glass-border); padding-bottom: 18px; }
-        .tube-details h2 { font-size: 21px; font-weight: 700; line-height: 1.4; color: #fff; }
-        .tube-metadata { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; flex-wrap: wrap; gap: 12px; }
-        .channel-info { display: flex; align-items: center; gap: 12px; }
-        .channel-info .avatar { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 17px; color: var(--accent); }
-        .channel-text h4 { font-size: 15.5px; font-weight: 600; }
-        .channel-text p { font-size: 12px; color: var(--text-muted); }
-        
-        /* BOX DESKRIPSI KACA TEBAL */
-        .tube-desc-box { background: var(--glass-card); border: 1px solid var(--glass-border); backdrop-filter: blur(10px); border-radius: 14px; padding: 16px; margin-top: 16px; font-size: 14px; line-height: 1.6; color: #e4e4ed; }
-        
-        /* ── SECTION TERKAIT / REKOMENDASI ── */
-        .related-section { margin-top: 10px; }
-        .section-title { font-size: 16px; font-weight: 700; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.8px; color: #fff; }
+        #playing-title { margin:14px 4px 6px; font-size:17px; font-weight:600; line-height:1.4; color:rgba(255,255,255,0.92); }
 
-        .results-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:22px; width: 100%; }
+        /* ── RESULTS LABEL ── */
+        .results-label {
+            width:100%; max-width:1200px; display:none; align-items:center; gap:10px;
+            margin:18px 0 14px; font-size:12px; color:var(--text-muted); font-weight:600;
+            letter-spacing:0.08em; text-transform:uppercase;
+        }
+        .results-label::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,var(--glass-border),transparent); }
 
-        /* KARTU VIDEO/MUSIK KACA */
+        /* ── RESULTS GRID ── */
+        .results-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; width:100%; max-width:1200px; }
+
+        /* ── VIDEO CARD ── */
         .video-card {
-            cursor:pointer; background: var(--glass-card); backdrop-filter: blur(10px); border-radius:16px; overflow:hidden;
-            transition:all 0.35s cubic-bezier(0.25, 1, 0.5, 1); padding: 11px; border: 1px solid var(--glass-border);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            cursor:pointer;
+            background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:14px; overflow:hidden;
+            backdrop-filter:blur(16px);
+            transition:transform 0.3s cubic-bezier(.2,.8,.2,1),box-shadow 0.3s ease,border-color 0.3s ease;
+            animation:cardIn 0.45s cubic-bezier(.2,.8,.2,1) both;
+            position:relative;
         }
-        .video-card:hover { transform:translateY(-5px); background:rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.2); box-shadow: 0 12px 30px rgba(0,0,0,0.3); }
-        .thumb-wrap { position:relative; overflow:hidden; border-radius: 12px; }
-        .thumb-wrap img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
-        body.music-mode .thumb-wrap img { aspect-ratio: 1/1; }
-        .video-card:hover .thumb-wrap img { transform: scale(1.03); }
-        
+        .video-card::before { content:''; position:absolute; inset:0; border-radius:14px; background:linear-gradient(135deg,rgba(255,255,255,0.05) 0%,transparent 60%); pointer-events:none; z-index:1; }
+        @keyframes cardIn { from{opacity:0;transform:translateY(18px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+        .video-card:hover { transform:translateY(-6px) scale(1.02); box-shadow:0 20px 55px rgba(0,0,0,0.5),0 0 0 1px rgba(255,59,59,0.25); border-color:rgba(255,59,59,0.3); }
+
+        body.music-mode .video-card:hover { box-shadow:0 20px 55px rgba(0,0,0,0.5),0 0 0 1px rgba(29,185,84,0.25); border-color:rgba(29,185,84,0.3); }
+
+        .thumb-wrap { position:relative; overflow:hidden; }
+        .thumb-wrap img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; transition:transform 0.4s ease; }
+        .video-card:hover .thumb-wrap img { transform:scale(1.06); }
+        .play-overlay { position:absolute; inset:0; background:rgba(0,0,0,0); display:flex; align-items:center; justify-content:center; transition:background 0.3s ease; }
         .play-btn {
-            position: absolute; bottom: 12px; right: 12px; width:38px; height:38px; border-radius:50%;
-            background:var(--accent); display:flex; align-items:center; justify-content:center; color: white; font-size:14px;
-            opacity:0; transform:translateY(8px); transition:all 0.3s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            width:50px; height:50px; border-radius:50%;
+            background:linear-gradient(135deg,var(--accent),var(--accent2));
+            display:flex; align-items:center; justify-content:center;
+            font-size:18px; opacity:0; transform:scale(0.5);
+            transition:all 0.3s cubic-bezier(.2,.8,.2,1);
+            box-shadow:0 8px 24px rgba(0,0,0,0.5);
         }
-        body.music-mode .play-btn { color: black; background: var(--music-accent); }
-        .video-card:hover .play-btn { opacity:1; transform:translateY(0); }
-        .card-body { padding: 12px 4px 4px; }
-        .card-body h3 { font-size:14px; font-weight:600; line-height:1.45; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; color: #f5f5f5; }
-        .card-body .channel { font-size:12px; color:var(--text-muted); margin-top:5px; font-weight: 400; }
+        .video-card:hover .play-overlay { background:rgba(0,0,0,0.45); }
+        .video-card:hover .play-btn { opacity:1; transform:scale(1); }
+        .card-body { padding:11px 13px 13px; position:relative; z-index:2; }
+        .card-body h3 { font-size:13px; font-weight:600; color:rgba(255,255,255,0.9); line-height:1.45; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+        .card-body .channel { font-size:11.5px; color:var(--text-muted); margin-top:5px; display:flex; align-items:center; gap:6px; }
+        .channel-dot { width:5px; height:5px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2)); flex-shrink:0; }
 
-        /* ── PLAYER CONTROL KACA (BAWAH) ── */
-        #spotify-player {
+        /* ── MUSIC MINI PLAYER ── */
+        #mini-player {
             position:fixed; bottom:0; left:0; right:0; z-index:300;
-            background: var(--glass-panel); backdrop-filter: blur(30px); border-top:1px solid var(--glass-border);
-            padding:12px 28px; display:none; justify-content: space-between; align-items:center;
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); height: 78px; box-shadow: 0 -8px 32px rgba(0,0,0,0.3);
+            background:rgba(8,8,16,0.85); backdrop-filter:blur(28px) saturate(180%);
+            border-top:1px solid rgba(29,185,84,0.25);
+            padding:10px 28px; display:none;
+            align-items:center; gap:20px;
+            box-shadow:0 -8px 40px rgba(0,0,0,0.5);
+            animation:playerIn 0.4s cubic-bezier(.2,.8,.2,1);
         }
-        
-        .sp-left { display: flex; align-items: center; gap: 14px; width: 30%; min-width: 190px; }
-        .sp-thumb { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); }
-        .sp-info { overflow: hidden; }
-        .sp-title { font-size: 14px; font-weight: 600; color: #fff; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
-        .sp-channel { font-size: 12px; color: #b5b5be; margin-top: 2px; }
+        @keyframes playerIn { from{transform:translateY(80px);opacity:0} to{transform:translateY(0);opacity:1} }
 
-        .sp-center { display: flex; flex-direction: column; align-items: center; width: 40%; max-width: 500px; }
-        .sp-controls { display: flex; align-items: center; gap: 24px; margin-bottom: 6px; }
-        .sp-btn { background: none; border: none; color: #bababa; font-size: 17px; cursor: pointer; transition: 0.2s; }
-        .sp-btn:hover { color: #fff; transform: scale(1.1); }
-        .sp-play { width: 36px; height: 36px; border-radius: 50%; background: #fff; color: #000; display: flex; align-items: center; justify-content: center; font-size: 14px; border:none; cursor:pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-        .sp-play:hover { transform: scale(1.08); }
+        .mini-thumb { width:48px; height:48px; border-radius:10px; object-fit:cover; flex-shrink:0; border:1px solid var(--glass-border); }
+        .mini-info { flex:1; min-width:0; }
+        .mini-title { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .mini-channel { font-size:11px; color:var(--text-muted); margin-top:2px; }
 
-        .sp-progress-container { display: flex; align-items: center; gap: 10px; width: 100%; }
-        .sp-time { font-size: 11px; color: #a7a7a7; min-width: 32px; }
-        .sp-bar-bg { flex: 1; height: 4px; background: rgba(255,255,255,0.12); border-radius: 2px; cursor: pointer; position: relative; }
-        .sp-bar-fill { height: 100%; background: #fff; border-radius: 2px; width: 0%; transition: width 0.1s linear; }
-        .sp-bar-bg:hover .sp-bar-fill { background: var(--music-accent); }
-
-        .sp-right { display: flex; align-items: center; justify-content: flex-end; gap: 18px; width: 30%; }
-
-        /* ── MODAL FULL SCREEN SPOTIFY KACA ULTRA MEWAH ── */
-        #spotify-player.expanded {
-            height: 100vh; top: 0; bottom: 0; background: linear-gradient(to bottom, rgba(16, 28, 20, 0.92), rgba(10, 10, 12, 0.98));
-            backdrop-filter: blur(40px); flex-direction: column; justify-content: flex-start; align-items: center; 
-            padding: 70px 24px 40px; gap: 0; overflow-y: auto;
+        .mini-controls { display:flex; align-items:center; gap:12px; }
+        .ctrl-btn {
+            width:36px; height:36px; border-radius:50%; border:none; cursor:pointer;
+            background:rgba(255,255,255,0.08); color:white; font-size:14px;
+            display:flex; align-items:center; justify-content:center;
+            transition:all 0.2s ease;
         }
-        
-        #spotify-player.expanded .btn-minimize { display: block; }
-        #spotify-player.expanded .sp-left {
-            flex-direction: column; width: 100%; max-width: 380px; text-align: center; align-items: center; gap: 18px;
-            margin-top: 30px; margin-bottom: 24px;
+        .ctrl-btn:hover { background:rgba(29,185,84,0.3); transform:scale(1.1); }
+        .ctrl-btn.play-pause {
+            width:42px; height:42px; font-size:16px;
+            background:linear-gradient(135deg,#1db954,#00c9ff);
+            box-shadow:0 4px 18px rgba(29,185,84,0.4);
         }
-        #spotify-player.expanded .sp-thumb {
-            width: 80%; aspect-ratio: 1/1; height: auto; border-radius: 20px; box-shadow: 0 25px 65px rgba(0,0,0,0.7);
-            border: 1px solid rgba(255,255,255,0.15);
-        }
-        #spotify-player.expanded .sp-info { text-align: left; width: 80%; }
-        #spotify-player.expanded .sp-title { font-size: 21px; font-weight: 700; white-space: normal; }
-        #spotify-player.expanded .sp-channel { font-size: 15px; color: rgba(255,255,255,0.6); }
-        
-        #spotify-player.expanded .sp-center { width: 80%; max-width: 380px; margin-bottom: 35px; }
-        #spotify-player.expanded .sp-controls { gap: 40px; margin-bottom: 20px; }
-        #spotify-player.expanded .sp-btn { font-size: 26px; }
-        #spotify-player.expanded .sp-play { width: 58px; height: 58px; font-size: 22px; }
-        #spotify-player.expanded .sp-bar-bg { height: 5px; }
+        .ctrl-btn.play-pause:hover { filter:brightness(1.15); transform:scale(1.08); }
 
-        #spotify-player.expanded .sp-right { display: none; }
-        
-        /* SEKSI REKOMENDASI MUSIK TERKAIT DI BAWAH */
-        .spotify-related-container { display: none; width: 100%; max-width: 400px; margin-top: 15px; padding: 0 10px 50px; }
-        #spotify-player.expanded .spotify-related-container { display: block; }
+        .mini-progress { flex:2; max-width:300px; display:flex; align-items:center; gap:8px; }
+        .progress-bar { flex:1; height:4px; background:rgba(255,255,255,0.15); border-radius:2px; cursor:pointer; position:relative; overflow:hidden; }
+        .progress-fill { height:100%; background:linear-gradient(90deg,#1db954,#00c9ff); border-radius:2px; width:0%; }
+        .time-label { font-size:11px; color:var(--text-muted); white-space:nowrap; }
 
-        .btn-minimize { display: none; position: absolute; top: 22px; left: 24px; background: none; border: none; color: white; font-size: 30px; cursor: pointer; opacity: 0.7; transition: 0.2s; }
-        .btn-minimize:hover { opacity: 1; transform: translateY(-2px); }
+        .mini-close { width:28px; height:28px; border-radius:50%; border:none; cursor:pointer; background:rgba(255,255,255,0.06); color:var(--text-muted); font-size:12px; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+        .mini-close:hover { background:rgba(255,59,59,0.25); color:white; }
 
-        /* KARTU MUSIK TERKAIT DI SPOTIFY KACA */
-        .glass-queue-item {
-            display:flex; align-items:center; gap:12px; background: rgba(255,255,255,0.04); 
-            padding:10px; border-radius:12px; cursor:pointer; border: 1px solid rgba(255,255,255,0.06);
-            transition: all 0.3s;
-        }
-        .glass-queue-item:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.15); transform: translateX(4px); }
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar { width:5px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.13); border-radius:3px; }
+        ::-webkit-scrollbar-thumb:hover { background:rgba(255,59,59,0.4); }
 
-        @media(max-width:768px) {
-            nav { flex-direction: column; height: auto; padding: 14px 12px; gap: 12px; }
-            .search-container { width: 100%; }
-            #spotify-player:not(.expanded) .sp-center { display: none; }
-            #spotify-player:not(.expanded) .sp-left { width: 70%; }
-            #spotify-player:not(.expanded) .sp-right { width: 25%; }
+        @media(max-width:680px) {
+            nav { flex-wrap:wrap; height:auto; padding:10px 14px; gap:8px; justify-content: center; }
+            .search-container { width:100%; order:3; }
+            .nav-tabs { order:2; }
+            .mini-progress { display:none; }
         }
     </style>
 </head>
 <body>
 
-<div id="splash-screen">
-    <div class="splash-logo">Nachyn <span>Glass Premium</span></div>
-    <div class="splash-loader"><div class="splash-loader-bar"></div></div>
+<div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
 </div>
 
-<div id="tab-loader"><div class="spinner"></div></div>
-
-<div class="bg-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
+<div id="loader-bar"></div>
 
 <nav>
-    <div class="logo" onclick="window.location.reload()">
-        <span>Nachyn</span><span class="logo-badge" id="logo-badge">Tube</span>
+    <div class="logo">
+        <span class="logo-name" id="logo-name">Nachyn</span>
+        <span class="logo-badge" id="logo-badge">Tube</span>
     </div>
+
     <div class="nav-tabs">
-        <div class="nav-tab active" id="tab-tube" onclick="switchPageWithLoading('tube')">▶ NachynTube</div>
-        <div class="nav-tab music-tab" id="tab-music" onclick="switchPageWithLoading('music')">♪ NachynMusic</div>
+        <div class="nav-tab tube-tab active" id="tab-tube" onclick="switchPage('tube')">
+            <span class="tab-icon">▶</span> NachynTube
+        </div>
+        <div class="nav-tab music-tab" id="tab-music" onclick="switchPage('music')">
+            <span class="tab-icon">♪</span> NachynMusic
+        </div>
     </div>
+
     <div class="search-container">
-        <input type="text" id="search-input" placeholder="Cari video favoritmu...">
+        <input type="text" id="search-input" placeholder="Cari video...">
         <button id="search-btn" onclick="doSearch()">Cari</button>
     </div>
 </nav>
 
 <div class="page active" id="page-tube">
     <div class="container">
-        <div class="tube-main-layout">
-            <div id="video-display">
-                <div class="player-wrapper" id="player"></div>
-                <div class="tube-details">
-                    <h2 id="playing-title">—</h2>
-                    <div class="tube-metadata">
-                        <div class="channel-info">
-                            <div class="avatar" id="video-avatar">N</div>
-                            <div class="channel-text">
-                                <h4 id="video-channel">—</h4>
-                                <p>🔒 Premium Verified Member</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tube-desc-box">
-                        <strong style="color:var(--accent)">Deskripsi & Informasi Video:</strong>
-                        <p id="video-desc" style="margin-top: 4px;">Klik salah satu video populer atau gunakan bilah pencarian untuk menyinkronkan video langsung ke server YouTube.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="related-section">
-                <div class="section-title" id="tube-label">🔥 Video Populer Rekomendasi</div>
-                <div class="results-grid" id="tube-results"></div>
-            </div>
+        <div class="hero" id="tube-hero">
+            <div class="hero-icon">▶</div>
+            <h1>Selamat Datang di <span>NachynTube</span></h1>
+            <p>Cari video favoritmu dan nikmati streaming tanpa batas</p>
         </div>
+        <div id="video-display">
+            <div class="player-glass">
+                <div class="player-wrapper" id="player"></div>
+            </div>
+            <h2 id="playing-title"></h2>
+        </div>
+        <div class="results-label" id="tube-label">Hasil Pencarian</div>
+        <div class="results-grid" id="tube-results"></div>
     </div>
 </div>
 
 <div class="page" id="page-music">
     <div class="container">
-        <div class="section-title" id="music-label">🎧 Lagu Terlaris Minggu Ini</div>
+        <div class="hero" id="music-hero">
+            <div class="hero-icon" style="background:linear-gradient(135deg,#1db954,#00c9ff);box-shadow:0 20px 60px rgba(29,185,84,0.3);">♪</div>
+            <h1>Selamat Datang di <span style="background:linear-gradient(90deg,#1db954,#00c9ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">NachynMusic</span></h1>
+            <p>Dengarkan musik favoritmu dengan player yang kece</p>
+        </div>
+        <div class="results-label" id="music-label">Hasil Pencarian</div>
         <div class="results-grid" id="music-results"></div>
     </div>
 </div>
 
-<div id="spotify-player">
-    <button class="btn-minimize" onclick="minimizeSpotifyPlayer()"></button>
-    
-    <div class="sp-left">
-        <img class="sp-thumb" id="sp-thumb" src="" alt="Cover">
-        <div class="sp-info">
-            <div class="sp-title" id="sp-title">—</div>
-            <div class="sp-channel" id="sp-channel">—</div>
+<div id="mini-player">
+    <img class="mini-thumb" id="mini-thumb" src="" alt="">
+    <div class="mini-info">
+        <div class="mini-title" id="mini-title">—</div>
+        <div class="mini-channel" id="mini-channel">—</div>
+    </div>
+    <div class="mini-controls">
+        <button class="ctrl-btn" onclick="prevTrack()" title="Sebelumnya">⏮</button>
+        <button class="ctrl-btn play-pause" id="pp-btn" onclick="togglePlay()">⏸</button>
+        <button class="ctrl-btn" onclick="nextTrack()" title="Berikutnya">⏭</button>
+    </div>
+    <div class="mini-progress">
+        <span class="time-label" id="time-cur">0:00</span>
+        <div class="progress-bar" id="prog-bar" onclick="seekTrack(event)">
+            <div class="progress-fill" id="prog-fill"></div>
         </div>
+        <span class="time-label" id="time-dur">0:00</span>
     </div>
-    
-    <div class="sp-center">
-        <div class="sp-controls">
-            <button class="sp-btn" onclick="prevTrack()">⏮</button>
-            <button class="sp-play" id="sp-play-btn" onclick="togglePlay()">▶</button>
-            <button class="sp-btn" onclick="nextTrack()">⏭</button>
-        </div>
-        <div class="sp-progress-container">
-            <span class="sp-time" id="sp-time-cur">0:00</span>
-            <div class="sp-bar-bg" id="sp-prog-bar" onclick="seekTrack(event)">
-                <div class="sp-bar-fill" id="sp-prog-fill"></div>
-            </div>
-            <span class="sp-time" id="sp-time-dur">0:00</span>
-        </div>
-    </div>
-
-    <div class="sp-right">
-        <button class="sp-btn-extra" onclick="maximizeSpotifyPlayer()" title="Full Screen">⛶</button>
-        <button class="sp-btn-extra" onclick="closePlayer()">✕</button>
-    </div>
-    
-    <div class="spotify-related-container">
-        <div class="section-title" style="margin-bottom:12px; font-size:14px; color:var(--music-accent)">✨ Alunan Musik Terkait</div>
-        <div id="spotify-mini-queue" style="display:flex; flex-direction:column; gap:10px;"></div>
-    </div>
+    <button class="mini-close" onclick="closeMiniPlayer()" title="Tutup">✕</button>
 </div>
 
-<div id="yt-player-dummy" style="position:fixed; left:-9999px; top:-9999px; width:1px; height:1px;"></div>
+<div id="music-iframe-container" style="position:fixed;bottom:-9999px;left:-9999px;width:1px;height:1px;"></div>
 
 <script>
-const API_KEY = 'AIzaSyDcY-7czDHgxYjCe6wvjZhusV-4DSBXGkM'; 
-
+const API_KEY = 'AIzaSyDcY-7czDHgxYjCe6wvjZhusV-4DSBXGkM';
+const loader = document.getElementById('loader-bar');
 let currentPage = 'tube';
-let ytPlayer = null; 
+
+// Music state
 let musicQueue = [];
 let currentTrackIdx = 0;
 let isPlaying = false;
 let progressInterval = null;
-let isVideoPlaying = false;
+let currentSec = 0;
+let durationSec = 0;
 
-window.onload = () => {
-    // Jalankan splash screen animasi penutup otomatis
-    setTimeout(() => {
-        const splash = document.getElementById('splash-screen');
-        splash.style.opacity = '0';
-        setTimeout(() => splash.style.visibility = 'hidden', 600);
-        loadBerandaDefault();
-    }, 2000); 
-    
-    window.addEventListener('scroll', handleVideoScroll);
-};
-
-function loadBerandaDefault() {
-    fetchYoutubeAPI('Trending Indonesia', 'tube', 12);
-    fetchYoutubeAPI('Lagu Pop Hits Indonesia', 'music', 12);
+// ── LOADER ──
+function showLoading() {
+    loader.style.width = '30%';
+    setTimeout(() => { if(loader.style.width === '30%') loader.style.width = '72%'; }, 200);
+}
+function hideLoading() {
+    loader.style.width = '100%';
+    setTimeout(() => { loader.style.width = '0%'; }, 450);
 }
 
-function switchPageWithLoading(page) {
-    if (page === currentPage) return;
-    const tabLoader = document.getElementById('tab-loader');
-    tabLoader.style.display = 'flex'; tabLoader.style.opacity = '1';
-    
-    if (page === 'music') {
-        document.getElementById('player').innerHTML = '';
-        document.getElementById('video-display').style.display = 'none';
-        isVideoPlaying = false;
-    } else {
-        if (ytPlayer && typeof ytPlayer.stopVideo === 'function') ytPlayer.stopVideo();
-        clearInterval(progressInterval); isPlaying = false; updatePlayBtnUI();
-        document.getElementById('spotify-player').style.display = 'none';
-        minimizeSpotifyPlayer();
-    }
-
-    setTimeout(() => {
-        switchPage(page);
-        tabLoader.style.opacity = '0';
-        setTimeout(() => tabLoader.style.display = 'none', 300);
-    }, 500);
-}
-
+// ── PAGE SWITCH ──
 function switchPage(page) {
     currentPage = page;
     document.getElementById('page-tube').classList.toggle('active', page === 'tube');
     document.getElementById('page-music').classList.toggle('active', page === 'music');
     document.getElementById('tab-tube').classList.toggle('active', page === 'tube');
     document.getElementById('tab-music').classList.toggle('active', page === 'music');
+
     document.body.classList.toggle('music-mode', page === 'music');
+
+    // logo
     document.getElementById('logo-badge').textContent = page === 'tube' ? 'Tube' : 'Music';
+    document.getElementById('logo-badge').style.background = page === 'tube'
+        ? 'linear-gradient(135deg,#ff3b3b,#ff8c42)'
+        : 'linear-gradient(135deg,#1db954,#00c9ff)';
+
+    // search placeholder
+    document.getElementById('search-input').placeholder = page === 'tube' ? 'Cari video...' : 'Cari lagu / artis...';
+    document.getElementById('search-btn').style.background = page === 'tube'
+        ? 'linear-gradient(135deg,#ff3b3b,#ff8c42)'
+        : 'linear-gradient(135deg,#1db954,#00c9ff)';
 }
 
-function handleVideoScroll() {
-    if (currentPage !== 'tube' || !isVideoPlaying) return;
-    const videoDisplay = document.getElementById('video-display');
-    if (window.scrollY > 420) {
-        videoDisplay.classList.add('floating');
-    } else {
-        videoDisplay.classList.remove('floating');
-    }
-}
-
+// ── SEARCH ──
 function doSearch() {
-    const queryStr = document.getElementById('search-input').value.trim();
-    if (!queryStr) return;
-    if (currentPage === 'tube') {
-        document.getElementById('tube-label').innerText = `Hasil Pencarian: "${queryStr}"`;
-        fetchYoutubeAPI(queryStr, 'tube', 12);
-    } else {
-        document.getElementById('music-label').innerText = `Hasil Pencarian Musik: "${queryStr}"`;
-        fetchYoutubeAPI(queryStr + ' official audio', 'music', 12);
-    }
+    if (currentPage === 'tube') searchTube();
+    else searchMusic();
 }
 
-async function fetchYoutubeAPI(query, type, maxResults) {
+// ── TUBE SEARCH ──
+async function searchTube() {
+    const q = document.getElementById('search-input').value.trim();
+    if (!q) return;
+    showLoading();
+    document.getElementById('tube-hero').style.display = 'none';
+    document.getElementById('tube-label').style.display = 'flex';
+
     try {
-        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${encodeURIComponent(query)}&type=video&key=${API_KEY}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        const grid = document.getElementById(`${type}-results`);
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=12&q=${encodeURIComponent(q)}&type=video&key=${API_KEY}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        const grid = document.getElementById('tube-results');
         grid.innerHTML = '';
-
-        if (!data.items || data.items.length === 0) return;
-        if(type === 'music') musicQueue = [];
-
-        data.items.forEach((item, index) => {
-            const cleanTitle = item.snippet.title.replace(/&quot;/g, '"').replace(/&#39;/g, "'");
-            const channel = item.snippet.channelTitle;
-            const thumbUrl = item.snippet.thumbnails.high.url;
+        
+        if (!data.items || data.items.length === 0) { 
+            grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:40px">Tidak ada hasil ditemukan.</p>'; 
+            hideLoading(); 
+            return; 
+        }
+        
+        data.items.forEach((item, i) => {
+            if (!item.id || !item.id.videoId || !item.snippet) return;
+            
             const vidId = item.id.videoId;
-            const desc = item.snippet.description || "Tonton kualitas audio visual premium dengan sistem enkripsi hemat kuota Nachyn Streaming.";
+            const title = item.snippet.title || 'Untitled Video';
+            const channel = item.snippet.channelTitle || 'Unknown Channel';
+            const thumb = item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.medium?.url || '';
 
-            if(type === 'music') musicQueue.push({ id: vidId, title: cleanTitle, channel: channel, thumb: thumbUrl });
-
-            const card = document.createElement('div');
-            card.className = 'video-card';
-            card.innerHTML = `
+            const c = document.createElement('div');
+            c.className = 'video-card';
+            c.style.animationDelay = `${i*0.05}s`;
+            c.innerHTML = `
                 <div class="thumb-wrap">
-                    <img src="${thumbUrl}" loading="lazy">
-                    <div class="play-btn">${type === 'tube' ? '▶' : '♪'}</div>
+                    <img src="${thumb}" alt="" loading="lazy">
+                    <div class="play-overlay"><div class="play-btn">▶</div></div>
                 </div>
                 <div class="card-body">
-                    <h3>${cleanTitle}</h3>
-                    <div class="channel">${channel}</div>
+                    <h3>${title}</h3>
+                    <div class="channel"><span class="channel-dot"></span>${channel}</div>
                 </div>`;
-            
-            card.onclick = () => type === 'tube' ? playTubeVideo(vidId, cleanTitle, channel, desc) : playMusicTrack(index);
-            grid.appendChild(card);
+            c.onclick = () => playTubeVideo(vidId, title);
+            grid.appendChild(c);
         });
-
-        if (type === 'music') buildSpotifyQueueUI();
-    } catch(err) { console.error(err); }
-}
-
-function playTubeVideo(id, title, channel, desc) {
-    isVideoPlaying = true;
-    const display = document.getElementById('video-display');
-    display.classList.remove('floating');
-    display.style.display = 'block';
-    
-    document.getElementById('playing-title').innerText = title;
-    document.getElementById('video-channel').innerText = channel;
-    document.getElementById('video-avatar').innerText = channel.charAt(0);
-    document.getElementById('video-desc').innerText = desc ? desc : "Tidak tersedia info rincian tambahan.";
-    
-    document.getElementById('player').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" allow="autoplay;encrypted-media" allowfullscreen></iframe>`;
-    window.scrollTo({top: 0, behavior: 'smooth'});
-    
-    // Tarik list video terkait di bawahnya otomatis
-    document.getElementById('tube-label').innerText = `✨ Video Terkait Untuk Ditonton`;
-    fetchYoutubeAPI(channel + ' official', 'tube', 8);
-}
-
-function onYouTubeIframeAPIReady() {
-    ytPlayer = new YT.Player('yt-player-dummy', {
-        height: '0', width: '0', videoId: '',
-        events: { 'onStateChange': onPlayerStateChange }
-    });
-}
-
-function onPlayerStateChange(event) {
-    if (event.data == YT.PlayerState.PLAYING) {
-        isPlaying = true; updatePlayBtnUI(); startProgressBarTracker();
-    } else if (event.data == YT.PlayerState.PAUSED || event.data == YT.PlayerState.ENDED) {
-        isPlaying = false; updatePlayBtnUI(); clearInterval(progressInterval);
-        if (event.data == YT.PlayerState.ENDED) nextTrack();
+    } catch(e) { 
+        console.error(e);
+        alert('Gagal mengambil data! Periksa koneksi internet atau API Key Anda.'); 
     }
+    hideLoading();
 }
 
+function playTubeVideo(id, title) {
+    showLoading();
+    const display = document.getElementById('video-display');
+    display.style.display = 'block';
+    display.style.animation = 'none'; void display.offsetWidth; display.style.animation = 'slideDown 0.5s cubic-bezier(.2,.8,.2,1)';
+    document.getElementById('playing-title').innerText = title;
+    document.getElementById('player').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" allow="autoplay;encrypted-media" allowfullscreen></iframe>`;
+    window.scrollTo({top:0, behavior:'smooth'});
+    hideLoading();
+}
+
+// ── MUSIC SEARCH ──
+async function searchMusic() {
+    const q = document.getElementById('search-input').value.trim();
+    if (!q) return;
+    showLoading();
+    document.getElementById('music-hero').style.display = 'none';
+    document.getElementById('music-label').style.display = 'flex';
+
+    try {
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=16&q=${encodeURIComponent(q + ' music')}&type=video&key=${API_KEY}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        const grid = document.getElementById('music-results');
+        grid.innerHTML = '';
+        musicQueue = [];
+        
+        if (!data.items || data.items.length === 0) { 
+            grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:40px">Tidak ada hasil ditemukan.</p>'; 
+            hideLoading(); 
+            return; 
+        }
+
+        let addedCount = 0;
+        data.items.forEach((item) => {
+            if (!item.id || !item.id.videoId || !item.snippet) return;
+            
+            const vidId = item.id.videoId;
+            const title = item.snippet.title || 'Untitled Track';
+            const channel = item.snippet.channelTitle || 'Unknown Artist';
+            const thumb = item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.medium?.url || '';
+
+            musicQueue.push({
+                id: vidId,
+                title: title,
+                channel: channel,
+                thumb: thumb
+            });
+
+            const currentIndex = addedCount;
+            const c = document.createElement('div');
+            c.className = 'video-card';
+            c.style.animationDelay = `${currentIndex*0.05}s`;
+            c.innerHTML = `
+                <div class="thumb-wrap">
+                    <img src="${thumb}" alt="" loading="lazy">
+                    <div class="play-overlay"><div class="play-btn" style="background:linear-gradient(135deg,#1db954,#00c9ff)">♪</div></div>
+                </div>
+                <div class="card-body">
+                    <h3>${title}</h3>
+                    <div class="channel"><span class="channel-dot" style="background:linear-gradient(135deg,#1db954,#00c9ff)"></span>${channel}</div>
+                </div>`;
+            c.onclick = () => playMusicTrack(currentIndex);
+            grid.appendChild(c);
+            addedCount++;
+        });
+    } catch(e) { 
+        console.error(e);
+        alert('Gagal mengambil musik! Periksa koneksi internet atau API Key Anda.'); 
+    }
+    hideLoading();
+}
+
+// ── MUSIC PLAYER ──
 function playMusicTrack(idx) {
-    if(!ytPlayer || !ytPlayer.loadVideoById) return;
     currentTrackIdx = idx;
     const track = musicQueue[idx];
     if (!track) return;
 
-    document.getElementById('spotify-player').style.display = 'flex';
-    document.getElementById('sp-thumb').src = track.thumb;
-    document.getElementById('sp-title').textContent = track.title;
-    document.getElementById('sp-channel').textContent = track.channel;
-
-    ytPlayer.loadVideoById(track.id);
+    // Show mini player
+    const mp = document.getElementById('mini-player');
+    mp.style.display = 'flex';
+    document.getElementById('mini-thumb').src = track.thumb;
+    document.getElementById('mini-title').textContent = track.title;
+    document.getElementById('mini-channel').textContent = track.channel;
+    document.getElementById('pp-btn').textContent = '⏸';
     isPlaying = true;
-    updatePlayBtnUI();
-    buildSpotifyQueueUI();
-}
 
-function buildSpotifyQueueUI() {
-    const queueList = document.getElementById('spotify-mini-queue');
-    queueList.innerHTML = '';
-    let count = 0;
-    
-    musicQueue.forEach((track, index) => {
-        if(index === currentTrackIdx || count >= 5) return;
-        count++;
-        const item = document.createElement('div');
-        item.className = 'glass-queue-item';
-        item.innerHTML = `
-            <img src="${track.thumb}" style="width:42px; height:42px; border-radius:6px; object-fit:cover;">
-            <div style="overflow:hidden; flex:1;">
-                <h5 style="font-size:12.5px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; color:#fff; font-weight:600;">${track.title}</h5>
-                <p style="font-size:10.5px; color:#b3b3b3; margin-top:2px;">${track.channel}</p>
-            </div>
-            <span style="color:var(--music-accent); font-size:13px;">♪</span>
-        `;
-        item.onclick = (e) => {
-            e.stopPropagation();
-            playMusicTrack(index);
-        };
-        queueList.appendChild(item);
+    // Reset progress
+    currentSec = 0; 
+    durationSec = 210; // default ~3.5 min estimate
+    document.getElementById('prog-fill').style.width = '0%';
+    document.getElementById('time-cur').textContent = '0:00';
+    document.getElementById('time-dur').textContent = fmtTime(durationSec);
+
+    // Create hidden iframe player
+    const container = document.getElementById('music-iframe-container');
+    container.innerHTML = `<iframe id="music-iframe" src="https://www.youtube.com/embed/${track.id}?autoplay=1&enablejsapi=1" allow="autoplay;encrypted-media" allowfullscreen></iframe>`;
+
+    // Simulate progress
+    clearInterval(progressInterval);
+    progressInterval = setInterval(() => {
+        if (!isPlaying) return;
+        currentSec++;
+        if (currentSec >= durationSec) { nextTrack(); return; }
+        document.getElementById('prog-fill').style.width = `${(currentSec/durationSec)*100}%`;
+        document.getElementById('time-cur').textContent = fmtTime(currentSec);
+    }, 1000);
+
+    // Highlight active card
+    document.querySelectorAll('#music-results .video-card').forEach((c,i) => {
+        c.style.borderColor = i === idx ? 'rgba(29,185,84,0.5)' : '';
+        c.style.boxShadow = i === idx ? '0 0 20px rgba(29,185,84,0.2)' : '';
     });
 }
 
 function togglePlay() {
-    if (!ytPlayer || !ytPlayer.getPlayerState) return;
-    if (ytPlayer.getPlayerState() == YT.PlayerState.PLAYING) ytPlayer.pauseVideo();
-    else ytPlayer.playVideo();
-}
-
-function updatePlayBtnUI() {
-    document.getElementById('sp-play-btn').innerHTML = isPlaying ? '⏸' : '▶';
-}
-
-function nextTrack() { if (musicQueue.length > 0) playMusicTrack((currentTrackIdx + 1) % musicQueue.length); }
-function prevTrack() { if (musicQueue.length > 0) playMusicTrack((currentTrackIdx - 1 + musicQueue.length) % musicQueue.length); }
-
-function startProgressBarTracker() {
-    clearInterval(progressInterval);
-    progressInterval = setInterval(() => {
-        if (!ytPlayer || !isPlaying) return;
-        const currentSec = ytPlayer.getCurrentTime() || 0;
-        const totalDuration = ytPlayer.getDuration() || 0;
-        if (totalDuration > 0) {
-            const percent = (currentSec / totalDuration) * 100;
-            document.getElementById('sp-prog-fill').style.width = percent + '%';
-            document.getElementById('sp-time-cur').textContent = fmtTime(currentSec);
-            document.getElementById('sp-time-dur').textContent = fmtTime(totalDuration);
+    isPlaying = !isPlaying;
+    document.getElementById('pp-btn').textContent = isPlaying ? '⏸' : '▶';
+    const iframe = document.getElementById('music-iframe');
+    if (iframe) {
+        if (!isPlaying) {
+            iframe.src = ''; // pause = stop iframe stream
+        } else {
+            const track = musicQueue[currentTrackIdx];
+            if (track) {
+                iframe.src = `https://www.youtube.com/embed/${track.id}?autoplay=1&enablejsapi=1`;
+            }
         }
-    }, 400);
+    }
+}
+
+function nextTrack() {
+    if (musicQueue.length === 0) return;
+    playMusicTrack((currentTrackIdx + 1) % musicQueue.length);
+}
+
+function prevTrack() {
+    if (musicQueue.length === 0) return;
+    if (currentSec > 4) { currentSec = 0; return; }
+    playMusicTrack((currentTrackIdx - 1 + musicQueue.length) % musicQueue.length);
 }
 
 function seekTrack(e) {
-    if (!ytPlayer || !ytPlayer.getDuration) return;
-    const bar = document.getElementById('sp-prog-bar');
+    const bar = document.getElementById('prog-bar');
     const ratio = e.offsetX / bar.offsetWidth;
-    ytPlayer.seekTo(ytPlayer.getDuration() * ratio, true);
+    currentSec = Math.floor(ratio * durationSec);
+    document.getElementById('prog-fill').style.width = `${ratio*100}%`;
+    document.getElementById('time-cur').textContent = fmtTime(currentSec);
 }
 
-function closePlayer() {
-    if(ytPlayer && typeof ytPlayer.stopVideo === 'function') ytPlayer.stopVideo();
+function closeMiniPlayer() {
     clearInterval(progressInterval);
-    document.getElementById('spotify-player').style.display = 'none';
-    minimizeSpotifyPlayer();
+    isPlaying = false;
+    document.getElementById('mini-player').style.display = 'none';
+    const c = document.getElementById('music-iframe-container');
+    if (c) c.innerHTML = '';
+    document.querySelectorAll('#music-results .video-card').forEach(c => { c.style.borderColor=''; c.style.boxShadow=''; });
 }
 
-function fmtTime(seconds) {
-    const s = Math.floor(seconds || 0);
-    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2,'0')}`;
+function fmtTime(s) {
+    const m = Math.floor(s/60);
+    return `${m}:${String(Math.floor(s%60)).padStart(2,'0')}`;
 }
 
-function maximizeSpotifyPlayer() {
-    document.getElementById('spotify-player').classList.add('expanded');
-}
-
-function minimizeSpotifyPlayer() {
-    document.getElementById('spotify-player').classList.remove('expanded');
-}
+// ── ENTER KEY ──
+document.getElementById('search-input').addEventListener('keypress', e => {
+    if (e.key === 'Enter') doSearch();
+});
 </script>
 </body>
 </html>
