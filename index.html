@@ -388,4 +388,218 @@ function hideLoading() {
 function switchPage(page) {
     currentPage = page;
     document.getElementById('page-tube').classList.toggle('active', page === 'tube');
-    document.getElementById('page-music').classList.toggle('active', page === 'music'
+    document.getElementById('page-music').classList.toggle('active', page === 'music');
+document.getElementById('tab-tube').classList.toggle('active', page === 'tube');
+    document.getElementById('tab-music').classList.toggle('active', page === 'music');
+
+    document.body.classList.toggle('music-mode', page === 'music');
+
+    // logo
+    document.getElementById('logo-badge').textContent = page === 'tube' ? 'Tube' : 'Music';
+    document.getElementById('logo-badge').style.background = page === 'tube'
+        ? 'linear-gradient(135deg,#ff3b3b,#ff8c42)'
+        : 'linear-gradient(135deg,#1db954,#00c9ff)';
+
+    // search placeholder
+    document.getElementById('search-input').placeholder = page === 'tube' ? 'Cari video...' : 'Cari lagu / artis...';
+    document.getElementById('search-btn').style.background = page === 'tube'
+        ? 'linear-gradient(135deg,#ff3b3b,#ff8c42)'
+        : 'linear-gradient(135deg,#1db954,#00c9ff)';
+}
+
+// ── SEARCH ──
+function doSearch() {
+    if (currentPage === 'tube') searchTube();
+    else searchMusic();
+}
+
+// ── TUBE SEARCH ──
+async function searchTube() {
+    const q = document.getElementById('search-input').value.trim();
+    if (!q) return;
+    showLoading();
+    document.getElementById('tube-hero').style.display = 'none';
+    document.getElementById('tube-label').style.display = 'flex';
+
+    try {
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=12&q=${encodeURIComponent(q)}&type=video&key=${API_KEY}`;
+        const data = await (await fetch(url)).json();
+        const grid = document.getElementById('tube-results');
+        grid.innerHTML = '';
+        if (!data.items?.length) { grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:40px">Tidak ada hasil.</p>'; hideLoading(); return; }
+        data.items.forEach((item, i) => {
+            const c = document.createElement('div');
+            c.className = 'video-card';
+            c.style.animationDelay = `${i*0.05}s`;
+            c.innerHTML = `
+                <div class="thumb-wrap">
+                    <img src="${item.snippet.thumbnails.high.url}" alt="" loading="lazy">
+                    <div class="play-overlay"><div class="play-btn">▶</div></div>
+                </div>
+                <div class="card-body">
+                    <h3>${item.snippet.title}</h3>
+                    <div class="channel"><span class="channel-dot"></span>${item.snippet.channelTitle}</div>
+                </div>`;
+            c.onclick = () => playTubeVideo(item.id.videoId, item.snippet.title);
+            grid.appendChild(c);
+        });
+    } catch(e) { alert('Gagal! Cek API Key.'); }
+    hideLoading();
+}
+
+function playTubeVideo(id, title) {
+    showLoading();
+    const display = document.getElementById('video-display');
+    display.style.display = 'block';
+    display.style.animation = 'none'; void display.offsetWidth; display.style.animation = 'slideDown 0.5s cubic-bezier(.2,.8,.2,1)';
+    document.getElementById('playing-title').innerText = title;
+    document.getElementById('player').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" allow="autoplay;encrypted-media" allowfullscreen></iframe>`;
+    window.scrollTo({top:0, behavior:'smooth'});
+    hideLoading();
+}
+
+// ── MUSIC SEARCH ──
+async function searchMusic() {
+    const q = document.getElementById('search-input').value.trim();
+    if (!q) return;
+    showLoading();
+    document.getElementById('music-hero').style.display = 'none';
+    document.getElementById('music-label').style.display = 'flex';
+
+    try {
+        // Search with "music" appended for better results
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=16&q=${encodeURIComponent(q + ' music')}&type=video&videoCategoryId=10&key=${API_KEY}`;
+        const data = await (await fetch(url)).json();
+        const grid = document.getElementById('music-results');
+        grid.innerHTML = '';
+        musicQueue = [];
+        if (!data.items?.length) { grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:40px">Tidak ada hasil.</p>'; hideLoading(); return; }
+
+        data.items.forEach((item, i) => {
+            musicQueue.push({
+                id: item.id.videoId,
+                title: item.snippet.title,
+                channel: item.snippet.channelTitle,
+                thumb: item.snippet.thumbnails.high.url
+            });
+            const c = document.createElement('div');
+            c.className = 'video-card';
+            c.style.animationDelay = `${i*0.05}s`;
+            c.innerHTML = `
+                <div class="thumb-wrap">
+                    <img src="${item.snippet.thumbnails.high.url}" alt="" loading="lazy">
+                    <div class="play-overlay"><div class="play-btn" style="background:linear-gradient(135deg,#1db954,#00c9ff)">♪</div></div>
+                </div>
+                <div class="card-body">
+                    <h3>${item.snippet.title}</h3>
+                    <div class="channel"><span class="channel-dot" style="background:linear-gradient(135deg,#1db954,#00c9ff)"></span>${item.snippet.channelTitle}</div>
+                </div>`;
+            c.onclick = () => playMusicTrack(i);
+            grid.appendChild(c);
+        });
+    } catch(e) { alert('Gagal! Cek API Key.'); }
+    hideLoading();
+}
+
+// ── MUSIC PLAYER ──
+function playMusicTrack(idx) {
+    currentTrackIdx = idx;
+    const track = musicQueue[idx];
+    if (!track) return;
+
+    // Show mini player
+    const mp = document.getElementById('mini-player');
+    mp.style.display = 'flex';
+    document.getElementById('mini-thumb').src = track.thumb;
+    document.getElementById('mini-title').textContent = track.title;
+    document.getElementById('mini-channel').textContent = track.channel;
+    document.getElementById('pp-btn').textContent = '⏸';
+    isPlaying = true;
+
+    // Reset progress
+    currentSec = 0; durationSec = 0;
+    document.getElementById('prog-fill').style.width = '0%';
+    document.getElementById('time-cur').textContent = '0:00';
+    document.getElementById('time-dur').textContent = '0:00';
+
+    // Create hidden iframe player
+    let container = document.getElementById('music-iframe-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'music-iframe-container';
+        container.style.cssText = 'position:fixed;bottom:-9999px;left:-9999px;width:1px;height:1px;';
+        document.body.appendChild(container);
+    }
+    container.innerHTML = `<iframe id="music-iframe" src="https://www.youtube.com/embed/${track.id}?autoplay=1&enablejsapi=1" allow="autoplay;encrypted-media" allowfullscreen></iframe>`;
+
+    // Simulate progress (since cross-origin blocks real YT API)
+    clearInterval(progressInterval);
+    durationSec = 210; // default ~3.5 min estimate
+    document.getElementById('time-dur').textContent = fmtTime(durationSec);
+    progressInterval = setInterval(() => {
+        if (!isPlaying) return;
+        currentSec++;
+        if (currentSec >= durationSec) { nextTrack(); return; }
+        document.getElementById('prog-fill').style.width = `${(currentSec/durationSec)*100}%`;
+        document.getElementById('time-cur').textContent = fmtTime(currentSec);
+    }, 1000);
+
+    // Highlight active card
+    document.querySelectorAll('#music-results .video-card').forEach((c,i) => {
+        c.style.borderColor = i === idx ? 'rgba(29,185,84,0.5)' : '';
+        c.style.boxShadow = i === idx ? '0 0 20px rgba(29,185,84,0.2)' : '';
+    });
+}
+
+function togglePlay() {
+    isPlaying = !isPlaying;
+    document.getElementById('pp-btn').textContent = isPlaying ? '⏸' : '▶';
+    // Reload iframe to play/pause (simplest cross-origin approach)
+    const iframe = document.getElementById('music-iframe');
+    if (iframe) {
+        const src = iframe.src;
+        if (!isPlaying) iframe.src = ''; // pause = remove src
+        else iframe.src = src || `https://www.youtube.com/embed/${musicQueue[currentTrackIdx]?.id}?autoplay=1&enablejsapi=1`;
+    }
+}
+
+function nextTrack() {
+    if (musicQueue.length === 0) return;
+    playMusicTrack((currentTrackIdx + 1) % musicQueue.length);
+}
+
+function prevTrack() {
+    if (musicQueue.length === 0) return;
+    if (currentSec > 4) { currentSec = 0; return; }
+    playMusicTrack((currentTrackIdx - 1 + musicQueue.length) % musicQueue.length);
+}
+
+function seekTrack(e) {
+    const bar = document.getElementById('prog-bar');
+    const ratio = e.offsetX / bar.offsetWidth;
+    currentSec = Math.floor(ratio * durationSec);
+    document.getElementById('prog-fill').style.width = `${ratio*100}%`;
+    document.getElementById('time-cur').textContent = fmtTime(currentSec);
+}
+
+function closeMiniPlayer() {
+    clearInterval(progressInterval);
+    isPlaying = false;
+    document.getElementById('mini-player').style.display = 'none';
+    const c = document.getElementById('music-iframe-container');
+    if (c) c.innerHTML = '';
+    document.querySelectorAll('#music-results .video-card').forEach(c => { c.style.borderColor=''; c.style.boxShadow=''; });
+}
+
+function fmtTime(s) {
+    const m = Math.floor(s/60);
+    return `${m}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+}
+
+// ── ENTER KEY ──
+document.getElementById('search-input').addEventListener('keypress', e => {
+    if (e.key === 'Enter') doSearch();
+});
+</script>
+</body>
+</html>
